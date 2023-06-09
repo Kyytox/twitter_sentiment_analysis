@@ -183,3 +183,14 @@ cython_debug/
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+
+# Ariflow
+airflow/logs
+airflow/dags/__pycache__
+airflow/*.cfg
+airflow/*.log
+airflow/*.py
+airflow/*.db
+airflow/*.txt
+airflow/*.pid
