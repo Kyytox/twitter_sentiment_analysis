@@ -25,7 +25,8 @@ AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 # Create S3 client
 def connect_aws():
     # create S3 client
-    s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY,
+    s3 = boto3.client('s3', 
+                    aws_access_key_id=AWS_ACCESS_KEY,
                     aws_secret_access_key=AWS_SECRET_KEY,
                     region_name=AWS_REGION)
 
@@ -34,7 +35,7 @@ def connect_aws():
 
 # get file from AWS S3
 def get_file_aws(key_file):
-    print("-------------get file from aws-----------------")
+    print("----------get file from aws----------")
 
     # create S3 client
     s3 = connect_aws()
@@ -52,24 +53,31 @@ def get_file_aws(key_file):
 
 
 # send parquet to AWS S3
-def send_to_aws(file_path, file_name):
-    print("-----------------send file to aws-----------------")
+def send_to_aws(df, file_name):
+    print("----------send to aws----------")
 
     # create S3 client
     s3 = connect_aws()
 
+    # create path file
+    path_file = f"s3://{AWS_BUCKET_NAME}/{file_name}"
+
     # upload file to S3
-    s3.upload_file(file_path, AWS_BUCKET_NAME, file_name)
+    wr.s3.to_parquet(
+        df=df,
+        path=path_file,
+    )
 
 
 
 # send partitionned parquet to AWS S3
 def send_to_aws_partition(df):
-    print("-----------------send to aws partition-----------------")
+    print("----------send partitionned to aws----------")
 
-    bucket = os.getenv("AWS_BUCKET_NAME")
-    path_file = f"s3://{bucket}/Silver/tweets_silver.parquet"
+    # get bucket name
+    path_file = f"s3://{AWS_BUCKET_NAME}/Silver/tweets_silver.parquet"
 
+    # send to aws
     wr.s3.to_parquet(df,
                     path_file,
                     partition_cols=['id_user'],

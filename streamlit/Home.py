@@ -6,8 +6,6 @@ import numpy as np
 import sys
 from pathlib import Path
 
-print("-----------------")
-print(str(Path(__file__).parent.parent / "aws"))
 sys.path.append(str(Path(__file__).parent.parent))
 
 
@@ -19,8 +17,8 @@ from aws.aws_utils import get_file_aws
 st.set_page_config(
     page_title="Home",
     page_icon="🧊",
-    layout="wide",
-    initial_sidebar_state="expanded",
+    # layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # Set page Title
@@ -38,12 +36,11 @@ st.markdown(
 if "df_history_tech" not in st.session_state:
     # get df_history_tech from AWS S3
     try:
-        st.session_state.df_history_tech = get_file_aws(
-            "df_history_tech.parquet")
+        st.session_state.df_history_tech = get_file_aws("history_tech.parquet")
     except:
         st.session_state.df_history_tech = None
 
 
 
 
-st.write(st.session_state.df_history_tech)
+st.write(st.session_state.df_history_tech.drop(columns=["timestamp_last_update"]))

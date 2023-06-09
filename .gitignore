@@ -164,6 +164,11 @@ cython_debug/
 .streamlit/
 
 
+# notebooks
+./notebooks/*.ipynb
+
+
+
 # Visual Studio Code
 .vscode/*
 .vscode/
