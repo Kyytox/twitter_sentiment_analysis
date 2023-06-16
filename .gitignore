@@ -194,3 +194,5 @@ airflow/*.py
 airflow/*.db
 airflow/*.txt
 airflow/*.pid
+airflow/venv
+

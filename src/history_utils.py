@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from aws.aws_utils import get_file_aws
+from aws.aws_utils import check_file_aws
 from aws.aws_utils import send_to_aws
 
 def update_history_tech(df_old_history_tech, df_bronze, timestamp):
@@ -41,9 +41,8 @@ def update_history_tech(df_old_history_tech, df_bronze, timestamp):
     df_new_history_tech = pd.concat(
         [df_old_history_tech, df_new_history_tech], ignore_index=True).reset_index(drop=True)
 
-    # save DataFrame in one parquet file
-    df_new_history_tech.to_parquet("./data/df_history_tech.parquet",
-                                engine="pyarrow", compression="snappy")
+    # Send df to AWS S3
+    send_to_aws(df_new_history_tech, "history_tech.parquet")
 
     return df_new_history_tech
 
@@ -53,10 +52,12 @@ def update_history_tech(df_old_history_tech, df_bronze, timestamp):
 
 # create parquet history_tech if not exists
 def create_history_tech_parquet():
-    try :
-        # get df_history_tech from AWS S3
-        df_history_tech = get_file_aws("history_tech.parquet")
-    except:
+
+    print("######################################################")
+    print("check history_tech.parquet")
+    
+    # check if file exists
+    if check_file_aws("history_tech.parquet") == False:
         # extract history Excel file
         df = pd.read_excel("./data_history_tech.xlsx" , engine="openpyxl")
 
@@ -64,4 +65,4 @@ def create_history_tech_parquet():
         send_to_aws(df, "history_tech.parquet")
 
 
-create_history_tech_parquet()
+# create_history_tech_parquet()

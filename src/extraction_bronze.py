@@ -1,14 +1,18 @@
 # librairies
+from pathlib import Path
+print(str(Path(__file__).parent.parent))
 from datetime import datetime, timedelta
 import pandas as pd
 import tweepy
-import dotenv
+# import dotenv
 import os
 from time import perf_counter
-
+import sys
 
 # Utils
-from utils.aws_utils import get_file_aws
+sys.path.append(str(Path(__file__).parent.parent))
+from aws.aws_utils import get_file_aws
+
 
 # load env variables
 dotenv.load_dotenv()
@@ -17,9 +21,12 @@ dotenv.load_dotenv()
 client = tweepy.Client(bearer_token=os.getenv("BEARER_TOKEN"))
 
 # get tweets
-def get_tweets(df_history_tech):
+def get_tweets():
     # user perf_counter
     t1_start = perf_counter()
+
+    # get history_tech from AWS S3
+    df_history_tech = get_file_aws("history_tech.parquet")
 
     # create dataFrame for append tweets
     df_bronze = pd.DataFrame(
@@ -27,38 +34,19 @@ def get_tweets(df_history_tech):
                 'text_tweet',
                 'nb_interactions', 'retweet_count',
                 'reply_count', 'like_count', 'quote_count'])
-
-    # # browse df
-    # for user in df_history_tech.id_user.unique():
-
-    #     # find row with last timestamp_last_update
-    #     df_user = df_history_tech[df_history_tech.id_user == user]
-    #     df_user = df_user[df_user.timestamp_last_update ==
-    #                     df_user.timestamp_last_update.max()]
-
-    #     # infos user
-    #     id_user = df_user.id_user.values[0]
-    #     name_user = df_user.name_user.values[0]
-    #     last_id_tweet = df_user.last_id_tweet.values[0]
     
     # browse df
     for df_user in df_history_tech.groupby('id_user'):
         
+        # get infos user, last update
         last_update = df_user.loc[df_user.timestamp_last_update.idxmax()]
-        id_user = last_update['id_user']
-        name_user = last_update['name_user']
-        last_id_tweet = last_update['last_id_tweet']
 
-        # for tests
-        # last_id_tweet = int(
-        #     df_user.last_id_tweet.values[0]) - 5000 if df_user.last_id_tweet.values[0] != '1' else '1'
-
-        print("get tweets for user : ", name_user, " id : ", id_user)
+        print("get tweets for user : ", last_update['name_user'], " id : ", last_update['id_user'])
 
         # Retrive maximum tweets of users since id retrieve (max 3200)
         tweets = tweepy.Paginator(client.get_users_tweets,
-                                id_user,
-                                since_id=last_id_tweet,
+                                last_update['id_user'],
+                                since_id=last_update['last_id_tweet'],
                                 tweet_fields=[
                                     'created_at', 'public_metrics',
                                     'in_reply_to_user_id', 'referenced_tweets'],
@@ -82,8 +70,8 @@ def get_tweets(df_history_tech):
                             nb_inter = retweet_count + reply_count + like_count + quote_count
 
                             # insert in DataFrame
-                            new_row = {'id_user': id_user,
-                                    'name_user': name_user,
+                            new_row = {'id_user': last_update['id_user'],
+                                    'name_user': last_update['name_user'],
                                     'date_tweet': x.created_at,
                                     'id_tweet': x.id,
                                     'text_tweet': x.text,
@@ -98,5 +86,5 @@ def get_tweets(df_history_tech):
 
     t1_stop = perf_counter()
     print("Time process :", t1_stop - t1_start)
-
-    return df_bronze
+    print("Number of tweets :", len(df_bronze))
+    # return df_bronze

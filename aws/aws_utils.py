@@ -40,7 +40,6 @@ def get_file_aws(key_file):
     # create S3 client
     s3 = connect_aws()
 
-
     # get parquet from S3
     parquet_object = s3.get_object(Bucket=AWS_BUCKET_NAME, Key=key_file)[
         'Body'].read()
@@ -50,6 +49,26 @@ def get_file_aws(key_file):
     df = pd.read_parquet(parquet_buffer)
 
     return df
+
+
+# check if file exist in AWS S3
+def check_file_aws(key_file):
+    print("----------check file in aws----------")
+
+    # create S3 client
+    s3 = connect_aws()
+
+    # get list object in bucket
+    response = s3.list_objects_v2(Bucket=AWS_BUCKET_NAME)
+
+    # check if file exist
+    if 'Contents' in response.keys():
+        for file in response['Contents']:
+            if file['Key'] == key_file:
+                return True
+    else:
+        return False
+
 
 
 # send parquet to AWS S3

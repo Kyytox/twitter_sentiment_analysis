@@ -1,0 +1,17 @@
+awswrangler==3.2.0
+boto3==1.26.153
+numpy==1.24.3
+openpyxl==3.1.2
+pandas==2.0.2
+path==16.6.0
+pathspec==0.9.0
+pyarrow==12.0.0
+pycparser==2.21
+torch==2.0.1
+torchaudio==2.0.2
+torchvision==0.15.2
+transformers==4.30.0
+tweepy==4.14.0
+urllib3==1.26.15
+validators==0.20.0
+
