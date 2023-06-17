@@ -41,8 +41,7 @@ def get_file_aws(key_file):
     s3 = connect_aws()
 
     # get parquet from S3
-    parquet_object = s3.get_object(Bucket=AWS_BUCKET_NAME, Key=key_file)[
-        'Body'].read()
+    parquet_object = s3.get_object(Bucket=AWS_BUCKET_NAME, Key=key_file)['Body'].read()
     parquet_buffer = io.BytesIO(parquet_object)
 
     # read parquet buffer

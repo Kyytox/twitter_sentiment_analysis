@@ -1,6 +1,5 @@
 # # Airflow
 # from airflow import DAG
-# from airflow.operators.python import PythonOperator
 # from airflow.operators.bash import BashOperator
 # from airflow.utils.dates import days_ago
 
@@ -65,14 +64,24 @@
 
 from datetime import datetime, timedelta
 from textwrap import dedent
+import sys
+from pathlib import Path
+
+# Utils
+sys.path.append(str(Path(__file__).parent.parent))
+from plugins.operators.extraction_bronze import get_tweets
+from plugins.operators.history_utils import create_history_tech
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
 
 # Operators; we need this to operate!
 from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+
+
 with DAG(
-    "tutorial",
+    "tweets_sentiment_analysis",
     # These args will get passed on to each operator
     # You can override them on a per-task basis during operator initialization
     default_args={
@@ -81,40 +90,23 @@ with DAG(
         "email_on_failure": False,
         "email_on_retry": False,
         "retries": 1,
-        "retry_delay": timedelta(minutes=1),
-        # 'queue': 'bash_queue',
-        # 'pool': 'backfill',
-        # 'priority_weight': 10,
-        # 'end_date': datetime(2016, 1, 1),
-        # 'wait_for_downstream': False,
-        # 'sla': timedelta(hours=2),
-        # 'execution_timeout': timedelta(seconds=300),
-        # 'on_failure_callback': some_function, # or list of functions
-        # 'on_success_callback': some_other_function, # or list of functions
-        # 'on_retry_callback': another_function, # or list of functions
-        # 'sla_miss_callback': yet_another_function, # or list of functions
-        # 'trigger_rule': 'all_success'
+        "retry_delay": timedelta(minutes=10),
     },
-    description="A simple tutorial DAG",
-    schedule=timedelta(minutes=3),
+    description="Get tweets for analysis sentiment with ML",
+    schedule=timedelta(minutes=2),
     start_date=datetime(2023, 6, 16),
     catchup=False,
-    tags=["example"],
+    tags=["tweets, ML, sentiment analysis"],
+
 ) as dag:
 
-    # t1, t2 and t3 are examples of tasks created by instantiating operators
-    t1 = BashOperator(
-        task_id="print_date",
+    # display date
+    start = BashOperator(
+        task_id="start",
         bash_command="date",
     )
 
-    t2 = BashOperator(
-        task_id="sleep",
-        depends_on_past=False,
-        bash_command="sleep 5",
-        retries=3,
-    )
-    t1.doc_md = dedent(
+    start.doc_md = dedent(
         """\
     #### Task Documentation
     You can document your task using the attributes `doc_md` (markdown),
@@ -138,10 +130,21 @@ with DAG(
     """
     )
 
-    t3 = BashOperator(
-        task_id="templated",
-        depends_on_past=False,
-        bash_command=templated_command,
+    # Task 1: check if file exists
+    # if not create it with infos of history_tech.xlsx
+    check_history_tech = PythonOperator(
+        task_id='check_file_history_aws',
+        python_callable=create_history_tech,
+        op_kwargs={'key_file': "history_tech.parquet"},
+        show_return_value_in_logs=True,
+        dag=dag
     )
 
-    t1 >> [t2, t3]
+    # # Task 3: get tweets
+    get_tweets = PythonOperator(
+        task_id='get_tweets',
+        python_callable=get_tweets,
+        dag=dag
+    )
+
+    start >> check_history_tech >> get_tweets

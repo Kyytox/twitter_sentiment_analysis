@@ -3,11 +3,14 @@ import datetime
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent))
 
+# Utils
+sys.path.append(str(Path(__file__).parent.parent))
 from aws.aws_utils import check_file_aws
 from aws.aws_utils import send_to_aws
 
+
+# Update history_tech after create bronze
 def update_history_tech(df_old_history_tech, df_bronze, timestamp):
     # # create DataFrame
     df_new_history_tech = pd.DataFrame()
@@ -49,9 +52,8 @@ def update_history_tech(df_old_history_tech, df_bronze, timestamp):
 
 
 
-
 # create parquet history_tech if not exists
-def create_history_tech_parquet():
+def create_history_tech():
 
     print("######################################################")
     print("check history_tech.parquet")
@@ -63,6 +65,3 @@ def create_history_tech_parquet():
 
         # Send to AWS S3
         send_to_aws(df, "history_tech.parquet")
-
-
-# create_history_tech_parquet()
