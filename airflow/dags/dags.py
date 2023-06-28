@@ -1,84 +1,22 @@
-# # Airflow
-# from airflow import DAG
-# from airflow.operators.bash import BashOperator
-# from airflow.utils.dates import days_ago
-
-# # librairies
-# from datetime import datetime, timedelta
-# import sys
-# from pathlib import Path
-
-# # Utils
-# sys.path.append(str(Path(__file__).parent.parent.parent))
-# # from aws.aws_utils import check_file_aws
-# # from src.extraction_bronze import get_tweets
-
-
-# # init Airflow DAG arguments
-# default_args = {
-#     'owner': 'admin',
-#     # 'depends_on_past': False,
-#     'retries': 3,
-#     'retry_delay': timedelta(minutes=1),
-# }
-
-
-# # define the DAG
-# dag = DAG(
-#     dag_id='tweets_sentiment_analysis',
-#     start_date=datetime(2023, 6, 16),
-#     description='Get tweets for analysis sentiment with ML',
-#     schedule_interval=timedelta(minutes=1),
-# )  
-    
-
-# start = BashOperator(
-#     task_id="start", 
-#     bash_command="echo 42",
-#     dag=dag)
-
-
-# # # Task 1: check if file exists
-# # # if not create it with infos of history_tech.xlsx
-# # check_file_aws = PythonOperator(
-# #     task_id='check_file_history_aws',
-# #     python_callable=check_file_aws,
-# #     op_kwargs={'key_file': "history_tech.parquet"},
-# #     dag=dag
-# # )
-
-# # # Task 2: get tweets
-# # get_tweets = PythonOperator(
-# #     task_id='get_tweets',
-# #     python_callable=get_tweets,
-# #     dag=dag
-# # )
-
-
-# # Run tasks
-# # start >> check_file_aws >> get_tweets
-# start
-
-
-
 
 from datetime import datetime, timedelta
 from textwrap import dedent
 import sys
 from pathlib import Path
 
-# Utils
-sys.path.append(str(Path(__file__).parent.parent))
-from airflow.plugins.operators.extraction_tweets import get_tweets
-from plugins.operators.history_utils import create_history_tech
-
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
 
-# Operators; we need this to operate!
+# Utils
+sys.path.append(str(Path(__file__).parent.parent))
+from plugins.utils.history_utils import create_history_tech
+
+# Operators
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
+from plugins.operators.extraction_tweets import get_tweets
+from plugins.operators.transform_data import transform_data
 
 with DAG(
     "tweets_sentiment_analysis",
@@ -147,4 +85,14 @@ with DAG(
         dag=dag
     )
 
-    start >> check_history_tech >> get_tweets
+
+    # Task 4: Detect sentiment
+    transform_data = PythonOperator(
+        task_id='transform_data',
+        python_callable=transform_data,
+        dag=dag
+    )
+
+
+    # Run tasks
+    start >> check_history_tech >> get_tweets >> transform_data

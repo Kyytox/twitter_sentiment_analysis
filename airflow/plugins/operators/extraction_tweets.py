@@ -10,8 +10,8 @@ import sys
 
 # Utils
 sys.path.append(str(Path(__file__).parent.parent))
-from aws.aws_utils import get_file_aws, send_to_aws
-from history_utils import update_history_tech
+from utils.aws_utils import get_file_aws, send_to_aws
+from utils.history_utils import update_history_tech
 
 
 # load env variables
@@ -22,14 +22,20 @@ dotenv.load_dotenv()
 # fonction test for insert new data because API twitter is not free
 def get_tweets__():
 
+    # get history_tech from AWS S3
+    df_history_tech = get_file_aws("history_tech.parquet")
+
     # read parquet data_to_insert
-    df_bronze = pd.read_csv("data_to_insert.csv")
+    df_bronze = pd.read_parquet("data_test.parquet")
 
     # create timestamp for file name
     timestamp = str(round(datetime.now().timestamp()))
 
     # Send df_bronze to AWS S3
     send_to_aws(df_bronze, f"Bronze/tweets_bronze_{timestamp}.parquet")
+
+    # update history_tech
+    update_history_tech(df_history_tech, df_bronze, timestamp)
 
 
 

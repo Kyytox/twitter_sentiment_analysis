@@ -11,7 +11,8 @@ from pathlib import Path
 
 # Utils
 sys.path.append(str(Path(__file__).parent.parent))
-from aws.aws_utils import get_file_aws, send_to_aws_partition
+from utils.aws_utils import get_file_aws
+from utils.aws_utils import send_to_aws_partition
 
 
 MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
@@ -164,7 +165,3 @@ def tranform_data():
 
 
     return df
-
-
-
-tranform_data()
