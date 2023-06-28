@@ -59,14 +59,7 @@ def get_partitionned_file_aws(key_file):
     # get parquet from S3
     df = wr.s3.read_parquet(path=f"s3://{AWS_BUCKET_NAME}/{key_file}")
 
-    # read parquet buffer
-    # df = pd.read_parquet(parquet_object)
-
     return df
-
-
-
-
 
 
 
@@ -114,7 +107,7 @@ def send_to_aws_partition(df):
     print("----------send partitionned to aws----------")
 
     # get bucket name
-    path_file = f"s3://{AWS_BUCKET_NAME}/Silver/tweets_silver.parquet"
+    path_file = f"s3://{AWS_BUCKET_NAME}/Gold/tweets_transform.parquet"
 
     # send to aws
     wr.s3.to_parquet(df,
