@@ -36,6 +36,7 @@ def connect_aws():
 # get file from AWS S3
 def get_file_aws(key_file):
     print("----------get file from aws----------")
+    print("key_file : ", key_file)
 
     # create S3 client
     s3 = connect_aws()
@@ -52,6 +53,8 @@ def get_file_aws(key_file):
 
 
 def get_partitionned_file_aws(key_file):
+    print("----------get partitionned file from aws----------")
+    print("key_file : ", key_file)
 
     # create S3 client
     s3 = connect_aws()
@@ -67,6 +70,7 @@ def get_partitionned_file_aws(key_file):
 # check if file exist in AWS S3
 def check_file_aws(key_file):
     print("----------check file in aws----------")
+    print("key_file : ", key_file)
 
     # create S3 client
     s3 = connect_aws()
@@ -87,6 +91,7 @@ def check_file_aws(key_file):
 # send parquet to AWS S3
 def send_to_aws(df, file_name):
     print("----------send to aws----------")
+    print("file_name : ", file_name)
 
     # create S3 client
     s3 = connect_aws()
@@ -103,11 +108,13 @@ def send_to_aws(df, file_name):
 
 
 # send partitionned parquet to AWS S3
-def send_to_aws_partition(df):
+def send_to_aws_partition(df, file_name):
     print("----------send partitionned to aws----------")
+    print("file_name : ", file_name)
+
 
     # get bucket name
-    path_file = f"s3://{AWS_BUCKET_NAME}/Gold/tweets_transform.parquet"
+    path_file = f"s3://{AWS_BUCKET_NAME}/{file_name}"
 
     # send to aws
     wr.s3.to_parquet(df,

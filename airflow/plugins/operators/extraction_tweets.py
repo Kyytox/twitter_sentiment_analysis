@@ -8,10 +8,10 @@ import os
 from time import perf_counter
 import sys
 
-# Utils
+# helpers
 sys.path.append(str(Path(__file__).parent.parent))
-from utils.aws_utils import get_file_aws, send_to_aws
-from utils.history_utils import update_history_tech
+from helpers.aws_utils import get_file_aws, send_to_aws
+from helpers.history_utils import update_history_tech
 
 
 # load env variables
@@ -26,13 +26,14 @@ def get_tweets__():
     df_history_tech = get_file_aws("history_tech.parquet")
 
     # read parquet data_to_insert
-    df_bronze = pd.read_parquet("data_test.parquet")
+    print(os.getcwd())
+    df_bronze = pd.read_parquet("./plugins/data_test.parquet")
 
     # create timestamp for file name
     timestamp = str(round(datetime.now().timestamp()))
 
     # Send df_bronze to AWS S3
-    send_to_aws(df_bronze, f"Bronze/tweets_bronze_{timestamp}.parquet")
+    send_to_aws(df_bronze, f"Bronze/tweets_collect_{timestamp}.parquet")
 
     # update history_tech
     update_history_tech(df_history_tech, df_bronze, timestamp)

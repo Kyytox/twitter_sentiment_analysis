@@ -5,9 +5,8 @@ from pathlib import Path
 
 
 # Utils
-sys.path.append(str(Path(__file__).parent.parent))
-from utils.aws_utils import check_file_aws
-from utils.aws_utils import send_to_aws
+from helpers.aws_utils import check_file_aws
+from helpers.aws_utils import send_to_aws
 
 
 # Update history_tech after create bronze

@@ -9,10 +9,9 @@ import sys
 from pathlib import Path
 
 
-# Utils
-sys.path.append(str(Path(__file__).parent.parent))
-from utils.aws_utils import get_file_aws
-from utils.aws_utils import send_to_aws_partition
+# helpers
+from helpers.aws_utils import get_file_aws
+from helpers.aws_utils import send_to_aws_partition
 
 
 MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
@@ -48,6 +47,7 @@ def get_data():
 
     # get last timestamp
     timestamp = df_history_tech['timestamp_last_update'].max()
+    print(f"timestamp: {timestamp}")
 
     # get parquet file from AWS S3
     df = get_file_aws(f"Bronze/tweets_collect_{timestamp}.parquet")
@@ -86,6 +86,7 @@ def format_text(text):
 
 # Detect sentiment of text with model
 def detect_sentiment(row):
+    print("Detect sentiment", row["id_tweet"])
     # detect Text sentiment
     encoded_input = tokenizer(row["text_formatted_tweet"], return_tensors="pt")
     output = model(**encoded_input)
@@ -145,7 +146,7 @@ def reindex_dataframe(df):
 
 
 # main 
-def tranform_data():
+def transform_data():
 
     # get data
     df = get_data()
@@ -161,7 +162,7 @@ def tranform_data():
     df = pd.merge(df, df_sentiment, on="id_tweet")
 
     # Send to AWS S3
-    send_to_aws_partition(df)
+    send_to_aws_partition(df, "Gold/tweets_transform.parquet")
 
 
     return df

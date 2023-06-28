@@ -7,32 +7,33 @@ from pathlib import Path
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
 
-# Utils
-sys.path.append(str(Path(__file__).parent.parent))
-from plugins.utils.history_utils import create_history_tech
+# Helpers
+from helpers.history_utils import create_history_tech
 
 # Operators
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
-from plugins.operators.extraction_tweets import get_tweets
-from plugins.operators.transform_data import transform_data
+from operators.extraction_tweets import get_tweets__
+from operators.transform_data import transform_data
+
 
 with DAG(
-    "tweets_sentiment_analysis",
+    "tweets_sentiment_analysisg",
     # These args will get passed on to each operator
     # You can override them on a per-task basis during operator initialization
-    default_args={
-        "depends_on_past": False,
-        "email": ["airflow@example.com"],
-        "email_on_failure": False,
-        "email_on_retry": False,
-        "retries": 1,
-        "retry_delay": timedelta(minutes=10),
-    },
+    # default_args={
+    #     "depends_on_past": False,
+    #     "email": ["airflow@example.com"],
+    #     "email_on_failure": False,
+    #     "email_on_retry": False,
+    #     "retries": 1,
+    #     "retry_delay": timedelta(minutes=2),
+    # },
     description="Get tweets for analysis sentiment with ML",
-    schedule=timedelta(minutes=2),
-    start_date=datetime(2023, 6, 16),
+    # schedule='@daily',
+    schedule='@once',
+    start_date=datetime(2023, 6, 1),
     catchup=False,
     tags=["tweets, ML, sentiment analysis"],
 
@@ -81,18 +82,18 @@ with DAG(
     # # Task 3: get tweets
     get_tweets = PythonOperator(
         task_id='get_tweets',
-        python_callable=get_tweets,
+        python_callable=get_tweets__,
         dag=dag
     )
 
 
     # Task 4: Detect sentiment
-    transform_data = PythonOperator(
-        task_id='transform_data',
+    transform_tweets = PythonOperator(
+        task_id='transform_tweets',
         python_callable=transform_data,
         dag=dag
     )
 
 
     # Run tasks
-    start >> check_history_tech >> get_tweets >> transform_data
+    start >> check_history_tech >> get_tweets >> transform_tweets
