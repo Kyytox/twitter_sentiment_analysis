@@ -1,6 +1,6 @@
 # librairies
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 import pandas as pd
 import tweepy
 import dotenv
@@ -11,27 +11,39 @@ import sys
 # Utils
 sys.path.append(str(Path(__file__).parent.parent))
 from aws.aws_utils import get_file_aws, send_to_aws
+from history_utils import update_history_tech
 
 
 # load env variables
 dotenv.load_dotenv()
 
 
+
+# fonction test for insert new data because API twitter is not free
+def get_tweets__():
+
+    # read parquet data_to_insert
+    df_bronze = pd.read_csv("data_to_insert.csv")
+
+    # create timestamp for file name
+    timestamp = str(round(datetime.now().timestamp()))
+
+    # Send df_bronze to AWS S3
+    send_to_aws(df_bronze, f"Bronze/tweets_bronze_{timestamp}.parquet")
+
+
+
+
 # Initialization Tweepy for use Twitter APi v2
 def init_tweepy():
-    # return tweepy.Client(bearer_token=os.getenv("BEARER_TOKEN"))
-    return tweepy.Client( bearer_token=os.getenv("ACCESS_TOKEN"), 
-                consumer_key=os.getenv("CONSUMER_KEY"), 
-                consumer_secret=os.getenv("CONSUMER_SECRET"), 
-                access_token=os.getenv("ACCESS_TOKEN"), 
-                access_token_secret=os.getenv("ACCESS_TOKEN_SECRET")
-                )
+    return tweepy.Client(os.getenv("ACCESS_TOKEN"))
+
+
 
 # get tweets
 def get_tweets():
-    print('os.dotenv : ', os.getenv("BEARER_TOKEN"))
-    # user perf_counter
-    t1_start = perf_counter()
+    # init tweepy
+    client = init_tweepy()
 
     # get history_tech from AWS S3
     df_history_tech = get_file_aws("history_tech.parquet")
@@ -47,22 +59,11 @@ def get_tweets():
                 'reply_count', 'like_count', 'quote_count'])
     
     # browse df
-    for key, df_user in df_history_tech.groupby('id_user'):
-        print("key : ", key)
-        print("df_user : ", df_user['timestamp_last_update'].dtypes)
-        
+    for key, df_user in df_history_tech.groupby('id_user'):        
         # get infos user, last update
         last_update = df_user.loc[df_user['timestamp_last_update'].idxmax()]
         print("get tweets for user : ", last_update['name_user'], " id : ", last_update['id_user'], " since id : ", last_update['last_id_tweet'])
 
-        # init tweepy
-        # client = init_tweepy()
-        client = tweepy.Client(bearer_token=os.getenv("ACCESS_TOKEN"),
-                            # consumer_key=os.getenv("CONSUMER_KEY"),
-                            # consumer_secret=os.getenv("CONSUMER_SECRET"), 
-                            # access_token=os.getenv("ACCESS_TOKEN"),
-                            # access_token_secret=os.getenv("ACCESS_TOKEN_SECRET")
-                            )
 
         # Retrive maximum tweets of users since id retrieve (max 3200)
         tweets = tweepy.Paginator(client.get_users_tweets,
@@ -102,11 +103,8 @@ def get_tweets():
                                     'like_count': like_count,
                                     'quote_count': quote_count}
 
-                            df_bronze = pd.concat([df_bronze, pd.DataFrame(new_row, index=[0])],
-                                                ignore_index=True)
+                            df_bronze = pd.concat([df_bronze, pd.DataFrame(new_row, index=[0])], ignore_index=True)
 
-    t1_stop = perf_counter()
-    print("Time process :", t1_stop - t1_start)
     print("Number of tweets :", len(df_bronze))
 
     # create timestamp for file name
@@ -114,4 +112,5 @@ def get_tweets():
 
     # Send df_bronze to AWS S3
     send_to_aws(df_bronze, f"Bronze/tweets_collect_{timestamp}.parquet")
-    # return df_bronze
+
+    update_history_tech(df_history_tech, df_bronze, timestamp)

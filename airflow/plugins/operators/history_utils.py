@@ -47,9 +47,6 @@ def update_history_tech(df_old_history_tech, df_bronze, timestamp):
     # Send df to AWS S3
     send_to_aws(df_new_history_tech, "history_tech.parquet")
 
-    return df_new_history_tech
-
-
 
 
 # create parquet history_tech if not exists

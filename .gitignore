@@ -165,7 +165,7 @@ cython_debug/
 
 
 # notebooks
-./notebooks/*.ipynb
+notebooks
 
 
 
@@ -196,3 +196,4 @@ airflow/*.txt
 airflow/*.pid
 airflow/venv
 
+data

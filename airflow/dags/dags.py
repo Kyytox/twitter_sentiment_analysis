@@ -69,7 +69,7 @@ from pathlib import Path
 
 # Utils
 sys.path.append(str(Path(__file__).parent.parent))
-from plugins.operators.extraction_bronze import get_tweets
+from airflow.plugins.operators.extraction_tweets import get_tweets
 from plugins.operators.history_utils import create_history_tech
 
 # The DAG object; we'll need this to instantiate a DAG

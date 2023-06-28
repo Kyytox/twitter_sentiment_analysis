@@ -50,6 +50,27 @@ def get_file_aws(key_file):
     return df
 
 
+
+def get_partitionned_file_aws(key_file):
+
+    # create S3 client
+    s3 = connect_aws()
+
+    # get parquet from S3
+    df = wr.s3.read_parquet(path=f"s3://{AWS_BUCKET_NAME}/{key_file}")
+
+    # read parquet buffer
+    # df = pd.read_parquet(parquet_object)
+
+    return df
+
+
+
+
+
+
+
+
 # check if file exist in AWS S3
 def check_file_aws(key_file):
     print("----------check file in aws----------")
