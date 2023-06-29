@@ -89,15 +89,13 @@ def check_file_aws(key_file):
 
 
 # send parquet to AWS S3
-def send_to_aws(df, file_name):
+def send_to_aws(df, key_file):
     print("----------send to aws----------")
-    print("file_name : ", file_name)
+    print("key_file : ", key_file)
 
-    # create S3 client
-    s3 = connect_aws()
 
     # create path file
-    path_file = f"s3://{AWS_BUCKET_NAME}/{file_name}"
+    path_file = f"s3://{AWS_BUCKET_NAME}/{key_file}"
 
     # upload file to S3
     wr.s3.to_parquet(
@@ -108,13 +106,13 @@ def send_to_aws(df, file_name):
 
 
 # send partitionned parquet to AWS S3
-def send_to_aws_partition(df, file_name):
+def send_to_aws_partition(df, key_file):
     print("----------send partitionned to aws----------")
-    print("file_name : ", file_name)
+    print("key_file : ", key_file)
 
 
     # get bucket name
-    path_file = f"s3://{AWS_BUCKET_NAME}/{file_name}"
+    path_file = f"s3://{AWS_BUCKET_NAME}/{key_file}"
 
     # send to aws
     wr.s3.to_parquet(df,

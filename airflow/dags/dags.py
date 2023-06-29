@@ -1,8 +1,6 @@
 
 from datetime import datetime, timedelta
 from textwrap import dedent
-import sys
-from pathlib import Path
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
@@ -19,7 +17,7 @@ from operators.transform_data import transform_data
 
 
 with DAG(
-    "tweets_sentiment_analysisg",
+    "tweets_sentiment_analysis",
     # These args will get passed on to each operator
     # You can override them on a per-task basis during operator initialization
     # default_args={
@@ -51,8 +49,6 @@ with DAG(
     You can document your task using the attributes `doc_md` (markdown),
     `doc` (plain text), `doc_rst`, `doc_json`, `doc_yaml` which gets
     rendered in the UI's Task Instance Details page.
-    ![img](http://montcs.bloomu.edu/~bobmon/Semesters/2012-01/491/import%20soul.png)
-    **Image Credit:** Randall Munroe, [XKCD](https://xkcd.com/license.html)
     """
     )
 
