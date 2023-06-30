@@ -14,17 +14,17 @@ from helpers.aws_utils import get_file_aws
 from helpers.aws_utils import send_to_aws_partition
 
 
-MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
+# MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
 # path = f"./cardiffnlp/twitter-roberta-base-sentiment-latest"
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
-config = AutoConfig.from_pretrained(MODEL)
-# tokenizer.save_pretrained(MODEL)
-# config.save_pretrained(MODEL)
+# tokenizer = AutoTokenizer.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
+# config = AutoConfig.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
+# # tokenizer.save_pretrained(MODEL)
+# # config.save_pretrained(path)
 
-# PT
-model = AutoModelForSequenceClassification.from_pretrained(MODEL)
-# model.save_pretrained(MODEL)
+# # PT
+# model = AutoModelForSequenceClassification.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
+# # model.save_pretrained(path)
 
 
 
@@ -38,6 +38,18 @@ Transform data
 - Send df to AWS S3 in parquet file, partitioned by id_user
 
 """
+
+
+
+def load_model():
+    tokenizer = AutoTokenizer.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
+    config = AutoConfig.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
+    model = AutoModelForSequenceClassification.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
+
+    return tokenizer, config, model
+
+
+
 
 
 
@@ -85,7 +97,7 @@ def format_text(text):
 
 
 # Detect sentiment of text with model
-def detect_sentiment(row):
+def detect_sentiment(row, tokenizer, config, model):
     print("Detect sentiment", row["id_tweet"])
     # detect Text sentiment
     encoded_input = tokenizer(row["text_formatted_tweet"], return_tensors="pt")
@@ -148,6 +160,9 @@ def reindex_dataframe(df):
 # main 
 def transform_data():
 
+    # load model
+    tokenizer, config, model = load_model()
+
     # get data
     df = get_data()
 
@@ -156,7 +171,7 @@ def transform_data():
     df["text_formatted_tweet"] = df["text_formatted_tweet"].apply(format_text)
 
     # detect sentiment
-    df_sentiment = df.apply(detect_sentiment, axis=1)
+    df_sentiment = df.apply(detect_sentiment, axis=1, args=(tokenizer, config, model))
 
     # reindex df
     df = pd.merge(df, df_sentiment, on="id_tweet")

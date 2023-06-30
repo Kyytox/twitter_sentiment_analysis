@@ -197,3 +197,4 @@ airflow/*.pid
 airflow/venv
 
 data
+airflow/cardiffnlp/twitter-roberta-base-sentiment-latest/
