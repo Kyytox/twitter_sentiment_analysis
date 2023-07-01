@@ -14,20 +14,6 @@ from helpers.aws_utils import get_file_aws
 from helpers.aws_utils import send_to_aws_partition
 
 
-# MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
-# path = f"./cardiffnlp/twitter-roberta-base-sentiment-latest"
-
-# tokenizer = AutoTokenizer.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
-# config = AutoConfig.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
-# # tokenizer.save_pretrained(MODEL)
-# # config.save_pretrained(path)
-
-# # PT
-# model = AutoModelForSequenceClassification.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
-# # model.save_pretrained(path)
-
-
-
 
 """
 Transform data
@@ -40,16 +26,23 @@ Transform data
 """
 
 
+MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
+
 
 def load_model():
-    tokenizer = AutoTokenizer.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
-    config = AutoConfig.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
-    model = AutoModelForSequenceClassification.from_pretrained("./cardiffnlp/twitter-roberta-base-sentiment-latest")
+    tokenizer = AutoTokenizer.from_pretrained(MODEL)
+    config = AutoConfig.from_pretrained(MODEL)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 
     return tokenizer, config, model
 
 
 
+# # if u want save Model in local
+# def save_model(tokenizer, config, model):
+#     tokenizer.save_pretrained(MODEL)
+#     config.save_pretrained(MODEL)
+#     model.save_pretrained(MODEL)
 
 
 
@@ -65,7 +58,6 @@ def get_data():
     df = get_file_aws(f"Bronze/tweets_collect_{timestamp}.parquet")
     
     
-
     ############
     # for test #
     ############
@@ -98,7 +90,6 @@ def format_text(text):
 
 # Detect sentiment of text with model
 def detect_sentiment(row, tokenizer, config, model):
-    print("Detect sentiment", row["id_tweet"])
     # detect Text sentiment
     encoded_input = tokenizer(row["text_formatted_tweet"], return_tensors="pt")
     output = model(**encoded_input)
@@ -162,6 +153,10 @@ def transform_data():
 
     # load model
     tokenizer, config, model = load_model()
+
+    # Save Model in local if not exist
+    # if not Path("./cardiffnlp").exists():
+    #     save_model(tokenizer, config, model)
 
     # get data
     df = get_data()
