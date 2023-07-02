@@ -26,7 +26,8 @@ Transform data
 """
 
 
-MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
+# MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
+MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment"
 
 
 def load_model():
@@ -62,7 +63,7 @@ def get_data():
     # for test #
     ############
     # keep only 300 rows
-    df = df.head(300)
+    # df = df.head(300)
 
     return df
 
@@ -165,14 +166,34 @@ def transform_data():
     df.rename(columns={'text_tweet': 'text_formatted_tweet'}, inplace=True)
     df["text_formatted_tweet"] = df["text_formatted_tweet"].apply(format_text)
 
-    # detect sentiment
-    df_sentiment = df.apply(detect_sentiment, axis=1, args=(tokenizer, config, model))
 
-    # reindex df
-    df = pd.merge(df, df_sentiment, on="id_tweet")
 
-    # Send to AWS S3
-    send_to_aws_partition(df, "Gold/tweets_transform.parquet")
+    # loop df 2000 by 2000 and send to AWS S3 
+    # to avoid memory error
+    for i in range(0, len(df), 2000):
+        df_part = df.iloc[i:i+2000]
+
+        # detect sentiment
+        df_sentiment = df_part.apply(detect_sentiment, axis=1, args=(tokenizer, config, model))
+
+        # reindex df
+        df_part = pd.merge(df_part, df_sentiment, on="id_tweet")
+
+        # send to AWS S3
+        send_to_aws_partition(df_part, "Gold/tweets_transform.parquet")
+
+
+    # # loop df 2000 by 2000
+    # for i in range(0, len(df), 2000):
+    #     # detect sentiment
+    #     df_sentiment = df.apply(detect_sentiment, axis=1, args=(tokenizer, config, model))
+
+    #     # reindex df
+    #     df = pd.merge(df, df_sentiment, on="id_tweet")
+
+    #     # Send to AWS S3
+    #     send_to_aws_partition(df, "Gold/tweets_transform.parquet")
+
 
 
     return df

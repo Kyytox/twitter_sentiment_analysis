@@ -2,29 +2,28 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-import tweepy
+import sys
+from pathlib import Path
 import dotenv
-import os
+
 
 # load env variables
 dotenv.load_dotenv()
 
-
-import sys
-from pathlib import Path
-
 sys.path.append(str(Path(__file__).parent.parent))
 
-
 # AWS utils 
-from airflow.plugins.aws.aws_utils import get_file_aws
+from airflow.plugins.helpers.aws_utils import get_partitionned_file_aws
+
+# Data Viz utils
+from vizualisation.display_graph import *
 
 
 # Set page config 
 st.set_page_config(
     page_title="Home",
     page_icon="🧊",
-    # layout="wide",
+    layout="wide",
     initial_sidebar_state="expanded"
 )
 
@@ -39,14 +38,34 @@ st.markdown(
     """
 )
 
+
+
 # Session State
-if "df_history_tech" not in st.session_state:
-    # get df_history_tech from AWS S3
-    try:
-        st.session_state.df_history_tech = get_file_aws("history_tech.parquet")
-    except:
-        st.session_state.df_history_tech = None
+if "df_data" not in st.session_state:
+    with st.spinner("Loading data..."):
+        try:
+            st.session_state.df_data = get_partitionned_file_aws("Gold/tweets_transform.parquet")
+        except:
+            st.session_state.df_data = None
+
+st.write(st.session_state.df_data.head())
+
+if "lst_user" not in st.session_state:
+    st.session_state.lst_user = st.session_state.df_data['name_user'].unique().tolist()
+
+
+if len(st.session_state.lst_user) == 0:
+    st.write("No data available")
+else:
+    with st.sidebar:
+        selected_user = st.selectbox("Select a user",
+                                    st.session_state.lst_user, key='user_selector')
+        
 
 
 
-st.write(st.session_state.df_history_tech)
+with st.container():
+    df = st.session_state.df_data[st.session_state.df_data['name_user'] == selected_user]
+    st.title(f"Sentiment Analysis of {selected_user}'s tweets")
+
+    display_graph(df)
