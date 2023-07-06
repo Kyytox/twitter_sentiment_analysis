@@ -26,7 +26,6 @@ Transform data
 """
 
 
-# MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
 MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment"
 
 
@@ -62,8 +61,8 @@ def get_data():
     ############
     # for test #
     ############
-    # keep only 300 rows
-    # df = df.head(300)
+    # keep only 200 rows
+    # df = df.head(200)
 
     return df
 
@@ -171,9 +170,10 @@ def transform_data():
 
     # reindex df
     df = pd.merge(df, df_sentiment, on="id_tweet")
+    print(df.head(100))
 
     # Send to AWS S3
-    send_to_aws_partition(df, "Gold/tweets_transform.parquet")
+    # send_to_aws_partition(df, "Gold/tweets_transform.parquet")
 
 
 

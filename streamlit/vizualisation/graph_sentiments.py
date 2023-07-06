@@ -198,7 +198,7 @@ def _get_heatmap_score(df):
 #  heat map of number of tweets by hour and by sentiment
 def _get_heatmap_nb_tweets(df):
     df['jour_semaine'] = pd.to_datetime(df['date_tweet']).dt.day_name()
-    df['heure'] = df['date_tweet'].dt.hour
+    df['heure'] = pd.to_datetime(df['date_tweet']).dt.hour
 
     # Create a dataframe regroup by day and hour and sentiment and calculate the number of tweets
     df_heatmap = df.groupby(['jour_semaine', 'heure', 'sentiment']).agg({'sentiment': 'size'}).rename(columns={'sentiment':'count'}).reset_index()

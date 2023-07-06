@@ -462,3 +462,12 @@ streamlit/nltk/stopwords/spanish
 streamlit/nltk/stopwords/swedish
 streamlit/nltk/stopwords/tajik
 streamlit/nltk/stopwords/turkish
+streamlit/venv_streamlit/bin/google-oauthlib-tool
+streamlit/venv_streamlit/bin/markdown_py
+streamlit/venv_streamlit/bin/pyrsa-decrypt
+streamlit/venv_streamlit/bin/pyrsa-encrypt
+streamlit/venv_streamlit/bin/pyrsa-keygen
+streamlit/venv_streamlit/bin/pyrsa-priv2pub
+streamlit/venv_streamlit/bin/pyrsa-sign
+streamlit/venv_streamlit/bin/pyrsa-verify
+streamlit/venv_streamlit/bin/wheel

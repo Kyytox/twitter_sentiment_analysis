@@ -45,9 +45,11 @@ if "df_data" not in st.session_state:
     with st.spinner("Loading data..."):
         try:
             st.session_state.df_data = get_partitionned_file_aws("Gold/tweets_transform.parquet")
+            st.session_state.df_data['date_tweet'] = pd.to_datetime(st.session_state.df_data['date_tweet'] , format='%Y-%m-%d %H:%M:%S')
         except:
             st.session_state.df_data = None
 
+st.write(st.session_state.df_data.shape)
 st.write(st.session_state.df_data.head())
 
 if "lst_user" not in st.session_state:
