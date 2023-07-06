@@ -27,9 +27,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Set page Title
-st.title("Twitter Sentiment Analysis")
-
 
 # Set page Subtitle
 st.markdown(
@@ -37,7 +34,6 @@ st.markdown(
     This is a simple sentiment analysis app that uses the Twitter API to fetch tweets and perform sentiment analysis on them.
     """
 )
-
 
 
 # Session State
@@ -50,24 +46,49 @@ if "df_data" not in st.session_state:
             st.session_state.df_data = None
 
 st.write(st.session_state.df_data.shape)
-st.write(st.session_state.df_data.head())
+st.write(st.session_state.df_data.columns)
+st.write(st.session_state.df_data.sentiment.unique())
 
 if "lst_user" not in st.session_state:
-    st.session_state.lst_user = st.session_state.df_data['name_user'].unique().tolist()
+    if st.session_state.df_data is None:
+        st.session_state.lst_user = []
+    else:
+        st.session_state.lst_user = st.session_state.df_data['name_user'].unique().tolist()
 
 
 if len(st.session_state.lst_user) == 0:
     st.write("No data available")
 else:
     with st.sidebar:
-        selected_user = st.selectbox("Select a user",
-                                    st.session_state.lst_user, key='user_selector')
-        
+        selected_user = st.selectbox("Select a user",st.session_state.lst_user, key='user_selector')
 
+                
+        colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
+
+        # Styles CSS pour les légendes
+        legend_style = """
+            display: inline-block;
+            margin-right: 10px;
+            padding: 5px;
+            border-radius: 10px;
+        """
+
+        # Affichage de la légende
+        st.subheader("Légende :")
+        st.markdown(
+            f'<span style="{legend_style} background-color: {colors[0]};">Negative</span>'
+            f'<span style="{legend_style} background-color: {colors[1]};">Neutral</span>'
+            f'<span style="{legend_style} background-color: {colors[2]};">Positive</span>',
+            unsafe_allow_html=True
+        )
 
 
 with st.container():
-    df = st.session_state.df_data[st.session_state.df_data['name_user'] == selected_user]
-    st.title(f"Sentiment Analysis of {selected_user}'s tweets")
+    if st.session_state.df_data is None:
+        st.write("No data available")
+    else:
+        df = st.session_state.df_data[st.session_state.df_data['name_user'] == selected_user]
+        st.title(f"Sentiment Analysis of :blue[{selected_user}]'s tweets")
 
-    display_graph(df)
+        st.divider()
+        display_graph(df)

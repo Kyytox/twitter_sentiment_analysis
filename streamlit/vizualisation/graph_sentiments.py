@@ -1,5 +1,4 @@
 import datetime
-import calendar
 import streamlit as st
 import pandas as pd
 
@@ -10,7 +9,7 @@ import plotly.graph_objects as go
 
 # functions 
 from vizualisation.process_graph import *
-from vizualisation.widgets import _get_freq_option
+from vizualisation.widgets import get_freq_option, create_year_month_selection
 
 
 sentiments = ['Positive','Neutral','Negative']
@@ -25,9 +24,9 @@ colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
 
 # Pie charts 
 # distribution of the number of tweets by sentiments
-def _get_pie_charts_by_sent(df):
+def get_pie_charts_by_sent(df):
     data_pie = get_nb_tweets_sent(df)
-    return go.Figure(
+    fig = go.Figure(
         data=[
             go.Pie(
                 labels=data_pie['sentiment'],
@@ -38,24 +37,25 @@ def _get_pie_charts_by_sent(df):
         ]
     )
 
+    return fig
+
 
 # Bar charts 
 # number of tweets by Sentiments 
-def _get_bar_charts_by_sent(df):
+def get_bar_charts_by_sent(df):
     data_bar = get_nb_tweets_sent(df)
-    fig2 = px.bar(data_bar, x='sentiment', y='nb_tweets', color='sentiment', color_discrete_sequence=colors, labels={'nb_tweets':'Nombre tweets analysés'}, text='nb_tweets')
-    fig2.update_traces(textfont_size=16, textangle=0, textposition="outside", cliponaxis=False)
-    st.subheader('Bar data')
-    st.plotly_chart(fig2,use_container_width=True)
+    fig = px.bar(data_bar, x='sentiment', y='nb_tweets', color='sentiment', color_discrete_sequence=colors, labels={'nb_tweets':'Nombre tweets analysés'}, text='nb_tweets')
+    fig.update_traces(textfont_size=16, textangle=0, textposition="outside", cliponaxis=False)
+    return fig
 
 
 
 
 # Score line chart
 # Mean of score by freq_option and by sentiment
-def _get_line_chart_score(df):
+def get_line_chart_score(df):
 
-    freq_option = _get_freq_option(1)
+    freq_option = get_freq_option(1)
 
     # group dataframe by day and sentiment and calculate the mean of score 
     # create a new data frame with 3 columns [date_tweet sentiment score]
@@ -76,11 +76,10 @@ def _get_line_chart_score(df):
 
 # Bar Charts Day
 # Number of tweets by day
-def _get_bar_charts_day(df):
+def get_bar_charts_day(df):
     # group dataframe by month and sentiment and count the nb of tweets  
     # create a new data frame with 3 columns [date_tweet sentiment count]
     df_data_bar_month = df.groupby([pd.Grouper(key='date_tweet',freq='M'), 'sentiment']).agg({'sentiment': 'size'}).rename(columns={'sentiment':'nb_tweets'}).reset_index()
-    st.subheader('Bar Month data')
 
     # create slide menu with year 
     # create calendar with month  
@@ -91,41 +90,48 @@ def _get_bar_charts_day(df):
 
     data = df_data_bar_month[df_data_bar_month['date_tweet'].dt.strftime("%Y").str.startswith(f'{report_year}')]
 
-    fig3 = px.bar(data, x='date_tweet', y='nb_tweets', color='sentiment', color_discrete_sequence=colors, labels={'nb_tweets':'Nombre tweets'},text='nb_tweets')
-    # type: ignore    fig3.update_traces(textfont_size=16, textangle=0, textposition="outside", cliponaxis=False)
-    st.plotly_chart(fig3,use_container_width=True)
+    fig = px.bar(data, x='date_tweet', y='nb_tweets', color='sentiment', color_discrete_sequence=colors, labels={'nb_tweets':'Nombre tweets'},text='nb_tweets')
+    fig.update_traces(textfont_size=16, textangle=0, textposition="outside", cliponaxis=False)
+    return fig
 
 
 
 # Bar Charts Month 
 # Number of tweets by month
-def _get_bar_charts_month(df):
-    # group dataframe by day and sentiment and count the nb of tweets  
-    # create a new data frame with 3 columns [date_tweet sentiment count]
-    df_data_bar_month = df.groupby([pd.Grouper(key='date_tweet',freq='D'), 'sentiment']).agg({'sentiment': 'size'}).rename(columns={'sentiment':'nb_tweets'}).reset_index()
-    st.subheader('Bar Day data')
+# def get_bar_charts_month_(df):
+#     # group dataframe by day and sentiment and count the nb of tweets  
+#     # create a new data frame with 3 columns [date_tweet sentiment count]
+#     df_data_bar_month = df.groupby([pd.Grouper(key='date_tweet',freq='D'), 'sentiment']).agg({'sentiment': 'size'}).rename(columns={'sentiment':'nb_tweets'}).reset_index()
+#     # filter dataframe by year and month
+#     df_data_bar_month = df_data_bar_month[df_data_bar_month['date_tweet'].dt.strftime("%Y-%m").str.startswith(f'{report_year}-{"{:02d}".format(report_month)}')]
 
-    # create slide menu with year 
-    # create calendar with month  
-    this_year = datetime.date.today().year
-    this_month = datetime.date.today().month
-    report_year = st.selectbox('', range(this_year, this_year - 4, -1), key=3)
-    month_name_lst = calendar.month_name[1:]
-    report_month_str = st.radio('', month_name_lst, index=this_month - 1, horizontal=True, key=4)
-    report_month = list(calendar.month_name).index(str(report_month_str))
+#     fig = px.bar(df_data_bar_month, x='date_tweet', y='nb_tweets', color='sentiment', color_discrete_sequence=colors, labels={'nb_tweets':'Nombre tweetswwwwww '},text_auto=True)
+#     fig.update_traces(textfont_size=14, textangle=0, cliponaxis=False)
+#     return fig
 
 
-    # filter dataframe by year and month
+def get_bar_charts_month(df):
+    # Group dataframe by day and sentiment and count the number of tweets
+    # Create a new data frame with 3 columns [date_tweet sentiment count]
+    df_data_bar_month = df.groupby([pd.Grouper(key='date_tweet', freq='D'), 'sentiment']) \
+                            .agg({'sentiment': 'size'}) \
+                            .rename(columns={'sentiment': 'nb_tweets'}) \
+                            .reset_index()
+
+    # Create year and month selection widgets
+    report_year, report_month = create_year_month_selection()
+
+    # Filter dataframe by year and month
     df_data_bar_month = df_data_bar_month[df_data_bar_month['date_tweet'].dt.strftime("%Y-%m").str.startswith(f'{report_year}-{"{:02d}".format(report_month)}')]
 
-    fig4 = px.bar(df_data_bar_month, x='date_tweet', y='nb_tweets', color='sentiment', color_discrete_sequence=colors, labels={'nb_tweets':'Nombre tweetswwwwww '},text_auto=True)
-    fig4.update_traces(textfont_size=14, textangle=0, cliponaxis=False)
-    st.plotly_chart(fig4,use_container_width=True)
+    # Create a bar chart
+    fig = px.bar(df_data_bar_month, x='date_tweet', y='nb_tweets', color='sentiment', color_discrete_sequence=colors, labels={'nb_tweets':'Nombre tweets'}, text_auto=True)
+    fig.update_traces(textfont_size=14, textangle=0, cliponaxis=False)
 
-
+    return fig
 
 # box charts of score by sentiment
-def _get_box_charts_score(df):
+def get_box_charts_score(df):
     # regroup df by sentiment 
     df_data_box = df.groupby(['sentiment']).agg({'score': ['mean', 'median', 'min', 'max', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]}).reset_index()
     fig = go.Figure()
@@ -167,41 +173,46 @@ def _get_box_charts_score(df):
 
 
 # heatmap of mean score by day and by sentiment
-def _get_heatmap_score(df):
+def get_heatmap_score(df):
 
-    freq_option = _get_freq_option(8)
+    freq_option = get_freq_option(8)
 
-    # group dataframe by day and sentiment and calculate the mean of score 
-    # create a new data frame with 3 columns [date_tweet sentiment score]
-    df_data_heatmap = df.groupby([pd.Grouper(key='date_tweet',freq=freq_option), 'sentiment']).agg({'score': 'mean'}).reset_index()
+    # Group by day and sentiment, calculate the mean score, and pivot the table
+    df_data_heatmap = df.groupby([pd.Grouper(key='date_tweet', freq=freq_option), 'sentiment']) \
+                        .agg({'score': 'mean'}) \
+                        .reset_index() \
+                        .pivot(index='sentiment', columns='date_tweet', values='score')
 
-    # create a pivot table with index = date_tweet, columns = sentiment and values = score
-    df_data_heatmap = df_data_heatmap.pivot(index='date_tweet', columns='sentiment', values='score')
 
     # create a heatmap
-    fig = go.Figure(data=go.Heatmap(
-                z=df_data_heatmap.values,
-                x=df_data_heatmap.columns,
-                y=df_data_heatmap.index,
-                colorscale='plasma'))
+    fig = go.Figure(
+        data=go.Heatmap(
+        z=df_data_heatmap.values,
+        x=df_data_heatmap.columns,
+        y=df_data_heatmap.index,
+        colorscale='plasma')
+    )
+    
     fig.update_layout(
         title='Heatmap of mean score by day and by sentiment',
         xaxis_title='Sentiment',
         yaxis_title='Date',
-        width=700,
-        height=1000,
+        height=500,
         autosize=True,
     )
     return fig
 
 
 #  heat map of number of tweets by hour and by sentiment
-def _get_heatmap_nb_tweets(df):
+def get_heatmap_nb_tweets(df):
     df['jour_semaine'] = pd.to_datetime(df['date_tweet']).dt.day_name()
     df['heure'] = pd.to_datetime(df['date_tweet']).dt.hour
 
     # Create a dataframe regroup by day and hour and sentiment and calculate the number of tweets
-    df_heatmap = df.groupby(['jour_semaine', 'heure', 'sentiment']).agg({'sentiment': 'size'}).rename(columns={'sentiment':'count'}).reset_index()
+    df_heatmap = df.groupby(['jour_semaine', 'heure', 'sentiment'])\
+        .agg({'sentiment': 'size'})\
+        .rename(columns={'sentiment':'count'})\
+        .reset_index()
 
     fig = go.Figure(data=go.Heatmap(
                     z=df_heatmap['count'],

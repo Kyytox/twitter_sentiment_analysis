@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 # Word Cloud
-def _get_wordcloud(wordcloud):
+def get_wordcloud(wordcloud):
     # Display the generated Word Cloud
     fig, ax = plt.subplots(figsize = (4, 4))
     ax.imshow(wordcloud, interpolation='bilinear')

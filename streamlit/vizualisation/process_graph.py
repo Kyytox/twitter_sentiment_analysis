@@ -6,12 +6,19 @@ import pandas as pd
 sentiments = ['Negative','Neutral','Positive']
 
 # number of tweets by sentiments
-def get_nb_tweets_sent(df):
+def get_nb_tweets_sent_(df):
     data_dict = {"sentiment": [], "nb_tweets": []}
 
     for sent in sentiments:
         data_dict["sentiment"].append(sent)
         data_dict["nb_tweets"].append(df.loc[df['sentiment'] == sent].shape[0])
+
+    
+    return data_dict
+
+def get_nb_tweets_sent(df):
+    sentiments = ["positive", "negative", "neutral"]
+    data_dict = {"sentiment": sentiments, "nb_tweets": [df.loc[df['sentiment'] == sent].shape[0] for sent in sentiments]}
     return data_dict
 
 
