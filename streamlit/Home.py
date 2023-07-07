@@ -19,6 +19,10 @@ from airflow.plugins.helpers.aws_utils import get_partitionned_file_aws
 from vizualisation.display_graph import *
 
 
+
+# Constants
+colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
+
 # Set page config 
 st.set_page_config(
     page_title="Home",
@@ -60,10 +64,6 @@ if len(st.session_state.lst_user) == 0:
     st.write("No data available")
 else:
     with st.sidebar:
-        selected_user = st.selectbox("Select a user",st.session_state.lst_user, key='user_selector')
-
-                
-        colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
 
         # Styles CSS pour les légendes
         legend_style = """
@@ -74,7 +74,7 @@ else:
         """
 
         # Affichage de la légende
-        st.subheader("Légende :")
+        st.subheader("Légend Graph")
         st.markdown(
             f'<span style="{legend_style} background-color: {colors[0]};">Negative</span>'
             f'<span style="{legend_style} background-color: {colors[1]};">Neutral</span>'
@@ -82,6 +82,7 @@ else:
             unsafe_allow_html=True
         )
 
+        selected_user = st.selectbox("Select a user",st.session_state.lst_user, key='user_selector')
 
 with st.container():
     if st.session_state.df_data is None:

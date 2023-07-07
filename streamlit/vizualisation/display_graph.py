@@ -56,17 +56,12 @@ def tabs_sentiments(df):
     st.subheader('Average scores by feeling')
     st.plotly_chart(gs.get_line_chart_score(df),use_container_width=True)
 
-    col5, col6 = st.columns([7,10])
-    with col5:
-        st.subheader('Number of tweets by month')
-        # st.plotly_chart(gs.get_bar_charts_day(df))
-    with col6:
-        st.subheader('Number of tweets by day')
-        st.plotly_chart(gs.get_bar_charts_month(df))
-    
     st.subheader('Number of tweets by month')
-    st.plotly_chart(gs.get_bar_charts_day(df))
+    st.plotly_chart(gs.get_bar_charts_month(df) ,use_container_width=True)
 
+    st.subheader('Number of tweets by day')
+    st.plotly_chart(gs.get_bar_charts_day(df) ,use_container_width=True)
+    
 
 
 
