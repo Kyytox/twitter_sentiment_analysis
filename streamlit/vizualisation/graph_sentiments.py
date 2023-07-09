@@ -13,20 +13,17 @@ from vizualisation.process_graph import *
 from vizualisation.widgets import get_freq_option
 
 
+
+# Constants
+colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
 sentiments = ['Positive','Neutral','Negative']
 
-# color in graphs
-# colors = ["rgb(0,114,27)", "rgb(195,195,0)", "rgb(145,0,13)"]
-colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
-
-
-##################################################
-# Graphs Sentiments 
 
 # Pie charts 
 # distribution of the number of tweets by sentiments
 def get_pie_charts_by_sent(df):
     data_pie = get_nb_tweets_sent(df)
+    
     fig = go.Figure(
         data=[
             go.Pie(
@@ -46,6 +43,7 @@ def get_pie_charts_by_sent(df):
 # number of tweets by Sentiments 
 def get_bar_charts_by_sent(df):
     data_bar = get_nb_tweets_sent(df)
+    
     fig = px.bar(
         data_bar, 
         x='sentiment', 
@@ -68,7 +66,9 @@ def get_line_chart_score(df):
     freq_option = get_freq_option(1)
 
     # group dataframe by day and sentiment and calculate the mean of score 
-    df_data_line = df.groupby([pd.Grouper(key='date_tweet',freq=freq_option), 'sentiment']).agg({'score': 'mean'}).reset_index()
+    df_data_line = df.groupby([pd.Grouper(key='date_tweet',freq=freq_option), 'sentiment'])\
+        .agg({'score': 'mean'})\
+        .reset_index()
 
     fig = px.line(df_data_line, 
                 x='date_tweet', 
@@ -198,7 +198,6 @@ def get_heatmap_score(df):
                         .agg({'score': 'mean'}) \
                         .reset_index() \
                         .pivot(index='sentiment', columns='date_tweet', values='score')
-
 
     # create a heatmap
     fig = go.Figure(

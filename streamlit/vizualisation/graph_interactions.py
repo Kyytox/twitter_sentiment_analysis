@@ -41,14 +41,23 @@ def get_line_chart_interactions(df):
 # bar charts interactions
 # Number of interactions by sentiment
 def get_bar_charts_interactions(df):
-    fig5 = px.bar(df, x="sentiment", y="count", color="interactions", color_discrete_sequence=['rgb(0, 186, 24)', 'rgb(29, 155, 240)','rgb(249, 24, 128)', 'rgb(218, 223, 0)'] , text="interactions")
-    fig5.update_traces(hovertemplate='%{label}<br>%{value}') # data when hover graph
-    st.plotly_chart(fig5, use_container_width=True)
+    fig = px.bar(
+        df, 
+        x="sentiment", 
+        y="count", 
+        color="interactions", 
+        color_discrete_sequence=['rgb(0, 186, 24)', 'rgb(29, 155, 240)','rgb(249, 24, 128)', 'rgb(218, 223, 0)'] , 
+        text="interactions"
+    )
+    
+    fig.update_traces(hovertemplate='%{label}<br>%{value}') # data when hover graph
+    
+    st.plotly_chart(fig, use_container_width=True)
 
 
 # pie charts interactions
 # Number of interactions by sentiment
 def get_pie_charts_interactions(df):
-    fig6 = px.sunburst(df, path=["sentiment","interactions"], values='count', color='sentiment', color_discrete_sequence=["rgb(145,0,13)","rgb(195,195,0)", "rgb(0,114,27)"])
-    fig6.update_traces(hovertemplate='%{label}<br>%{value}') # data when hover graph 
-    st.plotly_chart(fig6,use_container_width=True)
+    fig = px.sunburst(df, path=["sentiment","interactions"], values='count', color='sentiment', color_discrete_sequence=["rgb(145,0,13)","rgb(195,195,0)", "rgb(0,114,27)"])
+    fig.update_traces(hovertemplate='%{label}<br>%{value}') # data when hover graph 
+    st.plotly_chart(fig,use_container_width=True)

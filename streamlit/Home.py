@@ -35,7 +35,8 @@ st.set_page_config(
 # Set page Subtitle
 st.markdown(
     """
-    This is a simple sentiment analysis app that uses the Twitter API to fetch tweets and perform sentiment analysis on them.
+    This is a simple sentiment analysis app that uses the Twitter API to fetch tweets and perform sentiment analysis on them. \n
+    :red[A few data is missing, because Twitter has restricted his api]. \n
     """
 )
 
@@ -49,9 +50,6 @@ if "df_data" not in st.session_state:
         except:
             st.session_state.df_data = None
 
-st.write(st.session_state.df_data.shape)
-st.write(st.session_state.df_data.columns)
-st.write(st.session_state.df_data.sentiment.unique())
 
 if "lst_user" not in st.session_state:
     if st.session_state.df_data is None:
