@@ -9,8 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # functions 
-from vizualisation.process_graph import *
-from vizualisation.widgets import get_freq_option
+from vizualisation.utils import get_freq_option, get_nb_tweets_sent
 
 
 
@@ -19,8 +18,10 @@ colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
 sentiments = ['Positive','Neutral','Negative']
 
 
-# Pie charts 
-# distribution of the number of tweets by sentiments
+######################################################
+# Pie charts                                         #
+# distribution of the number of tweets by sentiments #
+######################################################
 def get_pie_charts_by_sent(df):
     data_pie = get_nb_tweets_sent(df)
     
@@ -39,8 +40,10 @@ def get_pie_charts_by_sent(df):
     return fig
 
 
-# Bar charts 
-# number of tweets by Sentiments 
+##################################
+# Bar charts                     #
+# number of tweets by Sentiments #
+##################################
 def get_bar_charts_by_sent(df):
     data_bar = get_nb_tweets_sent(df)
     
@@ -60,8 +63,10 @@ def get_bar_charts_by_sent(df):
 
 
 
-# Score line chart
-# Mean of score by freq_option and by sentiment
+#################################################
+# Score line chart                              #
+# Mean of score by freq_option and by sentiment #
+#################################################
 def get_line_chart_score(df):
     freq_option = get_freq_option(1)
 
@@ -85,8 +90,10 @@ def get_line_chart_score(df):
 
 
 
-# Bar Charts Day
-# Number of tweets by month and by sentiment
+##############################################
+# Bar Charts Day                             #
+# Number of tweets by month and by sentiment #
+##############################################
 def get_bar_charts_month(df):
     
     # group dataframe by day and sentiment and calculate number of tweets
@@ -119,7 +126,10 @@ def get_bar_charts_month(df):
 
 
 
-# Number of tweets by day and by sentiment
+############################################
+# Bar Charts Day                           #
+# Number of tweets by day and by sentiment #
+############################################
 def get_bar_charts_day(df):
     # Group dataframe by day and sentiment and count the number of tweets
     df_data = df.groupby([pd.Grouper(key='date_tweet', freq='D'), 'sentiment']) \
@@ -129,7 +139,7 @@ def get_bar_charts_day(df):
 
     # Create year and month selection widgets
     lst_year = df_data['date_tweet'].dt.strftime("%Y").unique()
-    report_year = st.selectbox('', lst_year, index=1, key=6)
+    report_year = st.selectbox('', lst_year, index=0, key=6)
     
 
     lst_month = df_data.query(f'date_tweet.dt.strftime("%Y") == "{report_year}"')['date_tweet'].dt.strftime("%B").unique()
@@ -153,7 +163,12 @@ def get_bar_charts_day(df):
     fig.update_traces(textfont_size=14, textangle=0, cliponaxis=False)
     return fig
 
-# box charts of score by sentiment
+
+
+######################
+# Box charts         #
+# score by sentiment #
+######################
 def get_box_charts_score(df):
     # regroup df by sentiment 
     df_data_box = df.groupby(['sentiment'])\
@@ -177,6 +192,7 @@ def get_box_charts_score(df):
                             marker_size=3, 
                             line_width=1, 
                             width=0.4))
+    
     fig.update_layout(
         xaxis_title='Sentiment',
         yaxis_title='Score',
@@ -188,7 +204,12 @@ def get_box_charts_score(df):
 
     return fig
 
-# heatmap of mean score by day and by sentiment
+
+
+######################################
+# Heatmap                            #
+# Mean score by day and by sentiment #
+######################################
 def get_heatmap_score(df):
 
     freq_option = get_freq_option(8)
@@ -217,7 +238,11 @@ def get_heatmap_score(df):
     return fig
 
 
-#  heat map of number of tweets by hour and by sentiment
+
+############################################
+# Heatmap                                  #
+# Number of tweets by day and by sentiment #
+############################################
 def get_heatmap_nb_tweets(df):
     df['jour_semaine'] = pd.to_datetime(df['date_tweet']).dt.day_name()
     df['heure'] = pd.to_datetime(df['date_tweet']).dt.hour

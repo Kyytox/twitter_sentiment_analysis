@@ -16,7 +16,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from airflow.plugins.helpers.aws_utils import get_partitionned_file_aws
 
 # Data Viz utils
-from vizualisation.display_graph import *
+import vizualisation.display_graph as dg
 
 
 
@@ -63,7 +63,7 @@ if len(st.session_state.lst_user) == 0:
 else:
     with st.sidebar:
 
-        # Styles CSS pour les légendes
+        # Styles CSS for legend
         legend_style = """
             display: inline-block;
             margin-right: 10px;
@@ -71,7 +71,7 @@ else:
             border-radius: 10px;
         """
 
-        # Affichage de la légende
+        # Legendary display
         st.subheader("Légend Graph")
         st.markdown(
             f'<span style="{legend_style} background-color: {colors[0]};">Negative</span>'
@@ -80,7 +80,13 @@ else:
             unsafe_allow_html=True
         )
 
+        # User
         selected_user = st.selectbox("Select a user",st.session_state.lst_user, key='user_selector')
+
+        # Tab
+        current_tab = st.sidebar.radio("Select a section :", ["Sentiments", "Interactions", "Frequent Words"])
+
+
 
 with st.container():
     if st.session_state.df_data is None:
@@ -90,4 +96,10 @@ with st.container():
         st.title(f"Sentiment Analysis of :blue[{selected_user}]'s tweets")
 
         st.divider()
-        display_graph(df)
+
+        if current_tab == "Sentiments":
+            dg.tabs_sentiments(df)
+        elif current_tab == "Interactions":
+            dg.tabs_interactions(df)
+        elif current_tab == "Frequent Words":
+            dg.tabs_frequent_words(df)

@@ -27,6 +27,7 @@ def token_text(sentence):
     return [X.text for X in doc]
 
 
+# remove stopwords
 def format_text_freq_words(text):
     # remove alla caract usefull for the analysis
     text = text.lower()
@@ -52,7 +53,7 @@ def format_text_freq_words(text):
 
 
 
-# # collect fréquents words in tweets
+# collect fréquents words in tweets
 @st.cache_data
 def get_frequent_words(df):
 
@@ -60,14 +61,12 @@ def get_frequent_words(df):
                         "sous", "vers", "mis", "tous", "soir", "vais", "dit", "comme", "mecredi", "janvier", "toutes", "fois", "devant", "sait", "pendant", "leurs", "leur", "vont", "dont", "malgré", "quand", "quoi", "quel", "met", "doit", "mardi", "demain", "déjà", "dés", "toute", "trop", "lundi", "peux"]
     
     # in variable list_tweets retrieve columns text_tweet of df
-    list_tweets = df[['text_tweet']].values.tolist()
+    list_tweets = df[['text_formatted_tweet']].values.tolist()
 
     dict_words = {}
 
     for text in list_tweets:
-        # print('text :', text[0])
         format_text = format_text_freq_words(text[0])
-        # print('format_text :', format_text)
 
         # Remove frequents words FR with stopWords
         clean_words = [token for token in token_text(
@@ -83,11 +82,8 @@ def get_frequent_words(df):
             else:
                 dict_words[x] = 1
 
-    df_words = pd.DataFrame(dict_words.items(), columns=[
-                            'text', 'value'])
+    df_words = pd.DataFrame(dict_words.items(), columns=['text', 'value'])
 
-    list_frequent_words = df_words.sort_values(
-        by='value', ascending=False).head(150).to_dict('records')
+    list_frequent_words = df_words.sort_values(by='value', ascending=False).head(200).to_dict('records')
 
-    # print('list_frequent_words :', list_frequent_words)
     return list_frequent_words

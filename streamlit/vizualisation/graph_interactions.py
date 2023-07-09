@@ -5,26 +5,25 @@ import pandas as pd
 import plotly.express as px
 
 # functions
-from vizualisation.widgets import get_freq_option
+from vizualisation.utils import get_freq_option
 
-sentiments = ['Positive','Neutral','Negative']
 
 # color in graphs
 colors = ["rgb(145,0,13)", "rgb(195,195,0)", "rgb(0,114,27)"]
 
 
-##################################################
-# Graphs interactions 
-
-# Interactions Line chart
-# Number of interactions by freq_option
+#########################################
+# Interactions Line chart               #
+# Number of interactions by freq_option #
+#########################################
 def get_line_chart_interactions(df):
     
         freq_option = get_freq_option(2)
     
-        # group dataframe by day and sentiment and calculate the mean of score 
-        # create a new data frame with 3 columns [date_tweet sentiment score]
-        df_data_line = df.groupby([pd.Grouper(key='date_tweet',freq=freq_option)]).agg({'nb_interactions': 'sum'}).reset_index()
+        # group dataframe by date_tweet and sum interactions
+        df_data_line = df.groupby([pd.Grouper(key='date_tweet',freq=freq_option)])\
+            .agg({'nb_interactions': 'sum'})\
+            .reset_index()
     
         fig = px.line(df_data_line, 
                     x='date_tweet', 
@@ -37,9 +36,10 @@ def get_line_chart_interactions(df):
         return fig
 
 
-
-# bar charts interactions
-# Number of interactions by sentiment
+#######################################
+# Bar charts interactions             #
+# Number of interactions by sentiment #
+#######################################
 def get_bar_charts_interactions(df):
     fig = px.bar(
         df, 
@@ -52,12 +52,22 @@ def get_bar_charts_interactions(df):
     
     fig.update_traces(hovertemplate='%{label}<br>%{value}') # data when hover graph
     
-    st.plotly_chart(fig, use_container_width=True)
+    return fig
 
 
-# pie charts interactions
-# Number of interactions by sentiment
+#######################################
+# Pie charts interactions             #
+# Number of interactions by sentiment #
+#######################################
 def get_pie_charts_interactions(df):
-    fig = px.sunburst(df, path=["sentiment","interactions"], values='count', color='sentiment', color_discrete_sequence=["rgb(145,0,13)","rgb(195,195,0)", "rgb(0,114,27)"])
+    fig = px.sunburst(
+        df,
+        path=["sentiment","interactions"], 
+        values='count', 
+        color='sentiment', 
+        color_discrete_sequence=["rgb(145,0,13)","rgb(195,195,0)", "rgb(0,114,27)"]
+    )
+    
     fig.update_traces(hovertemplate='%{label}<br>%{value}') # data when hover graph 
-    st.plotly_chart(fig,use_container_width=True)
+    
+    return fig

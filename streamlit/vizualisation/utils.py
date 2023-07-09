@@ -1,6 +1,22 @@
-
 import streamlit as st
-import pandas as pd
+
+
+# element selector radio for the frequency of the graph
+def get_freq_option(index):
+    lst_options = ['per day', 'every 3 days', 'per week', 'per month']    
+    freq_option = st.radio('Time frequency :', lst_options, index=0, horizontal=True, key=index)
+
+    # use match case to select the frequency of the graph
+    if freq_option == 'per day':
+        return 'D'
+    elif freq_option == 'every 3 days':
+        return '3D'
+    elif freq_option == 'per week':
+        return 'W'
+    elif freq_option == 'per month':
+        return 'M'
+    else:
+        return 'D'
 
 
 # number of tweets by sentiments
@@ -8,6 +24,7 @@ def get_nb_tweets_sent(df):
     sentiments = ["positive", "negative", "neutral"]
     data_dict = {"sentiment": sentiments, "nb_tweets": [df.loc[df['sentiment'] == sent].shape[0] for sent in sentiments]}
     return data_dict
+
 
 
 # get sum of interactions by sentiments (retweets, replies, quotes, likes) on random tweets
@@ -32,7 +49,6 @@ def get_data_interactions(df):
                                                     'reply_count': 'replies', 
                                                     'like_count': 'likes', 
                                                     'quote_count': 'quotes'})
-
 
     # create a new dataframe with 3 columns (interactions, sentiment, count)
     df_data_interac = df_data_interac.melt(id_vars=['sentiment'], value_vars=['retweets', 'replies', 'quotes', "likes"], var_name='interactions', value_name='count')
