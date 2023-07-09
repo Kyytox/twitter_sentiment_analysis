@@ -1,5 +1,7 @@
+import pathlib
 import streamlit as st
 import pandas as pd
+import os
 
 import re
 import spacy
@@ -7,24 +9,29 @@ import spacy.cli
 from nltk.corpus import stopwords
 import nltk
 
-# DL frequent words FR
+def load_nltk():
 
-# spacy.cli.download("fr_core_news_sm")
-# nltk.download('stopwords')
+    if not pathlib.Path("./nltk").exists():
+        os.mkdir("./nltk")
 
-# load model for french language
-nlp = spacy.load("./nltk/fr_core_news_sm/fr_core_news_sm-3.5.0")
-# nlp = spacy.load("fr_core_news_sm")
+        # download stopwords
+        spacy.cli.download("fr_core_news_sm")
+        nltk.download('stopwords', download_dir="./nltk")
+    
+    # download model for french language
+    nlp = spacy.load("fr_core_news_sm")
+    nltk.data.path.append("./nltk")
+    stopWords = set(stopwords.words('french'))
 
-# change the path of stopwords and set stopWords for french
-nltk.data.path.append("./nltk")
-stopWords = set(stopwords.words('french'))
+    return nlp, stopWords
+
 
 
 # Tokenise sentence
-def token_text(sentence):
+def token_text(sentence, nlp):
     doc = nlp(sentence)
     return [X.text for X in doc]
+
 
 
 # remove stopwords
@@ -51,11 +58,12 @@ def format_text_freq_words(text):
     return text
 
 
-
-
 # collect fréquents words in tweets
 @st.cache_data
 def get_frequent_words(df):
+
+    # Load frequent words
+    nlp, stopWords = load_nltk()
 
     list_freq_words_fr = ["oeclfybyif", "agindre", "après", "plus", "ans", "qu'", "qu’", "...", "avoir", "deux", "fait", "selon", "faire", "cette", "entre", "veut", "être", "tout", "depuis", "trois", "moins", "très", "lors", "mois", "avant", "sans", "faut", "cet", "peut", "près", "chez", "jusqu'",
                         "sous", "vers", "mis", "tous", "soir", "vais", "dit", "comme", "mecredi", "janvier", "toutes", "fois", "devant", "sait", "pendant", "leurs", "leur", "vont", "dont", "malgré", "quand", "quoi", "quel", "met", "doit", "mardi", "demain", "déjà", "dés", "toute", "trop", "lundi", "peux"]
@@ -69,8 +77,7 @@ def get_frequent_words(df):
         format_text = format_text_freq_words(text[0])
 
         # Remove frequents words FR with stopWords
-        clean_words = [token for token in token_text(
-            format_text) if token not in stopWords]
+        clean_words = [token for token in token_text(format_text, nlp) if token not in stopWords]
 
         list_words = [word for word in clean_words if len(
             word) > 2 and word not in list_freq_words_fr]
