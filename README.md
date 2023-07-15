@@ -54,7 +54,8 @@ If not, a new file is created with template ressources/data/data_history.xlsx
 This file contains the tweets already treated by the process.
 
 columns:
-date_last_update | timestamp_last_update | id_user | name_user | last_id_tweet | date_tweet
+| date_last_update | timestamp_last_update | id_user | name_user | last_id_tweet | date_tweet |
+|------------------|-----------------------|---------|-----------|---------------|------------|
 
 
 
@@ -65,7 +66,8 @@ Extract data from data_to_insert.parquet file
 According to the NUMBER_DATA_TRAIN parameter, and df_data_history, the process will extract the tweets to be treated.
 
 columns:
-name_user	date_tweet	id_tweet	text_formatted_tweet	nb_interactions	retweet_count	reply_count	like_count	quote_count	sentiment	score	negative	neutral	positive	id_user
+| name_user | date_tweet | id_tweet | text_formatted_tweet | nb_interactions | retweet_count | reply_count | like_count | quote_count | sentiment | score | negative | neutral | positive | id_user |
+|-----------|------------|----------|----------------------|-----------------|---------------|-------------|------------|-------------|-----------|-------|----------|---------|----------|---------|
 
 
 
