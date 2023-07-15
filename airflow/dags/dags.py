@@ -12,7 +12,7 @@ from helpers.history_utils import create_history_tech
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
-from operators.extraction_tweets import get_tweets
+from operators.extraction_tweets import get_tweets, get_tweets_with_tweepy
 from operators.transform_data import transform_data
 
 
@@ -48,12 +48,21 @@ with DAG(
         dag=dag
     )
 
-    # # Task 3: get tweets
+
+    # # Task 3: get tweets without tweepy
     get_tweets = PythonOperator(
         task_id='get_tweets',
         python_callable=get_tweets,
         dag=dag
     )
+
+
+    # # Task 3: get tweets with tweepy
+    # get_tweets = PythonOperator(
+    #     task_id='get_tweets_with_tweepy',
+    #     python_callable=get_tweets_with_tweepy,
+    #     dag=dag
+    # )
 
 
     # Task 4: Detect sentiment
