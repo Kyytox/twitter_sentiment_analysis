@@ -45,14 +45,7 @@ def get_data():
     timestamp = df_history['timestamp_last_update'].max()
 
     # get parquet file from AWS S3
-    df = get_file_aws(f"Bronze/tweets_collect_{timestamp}.parquet")
-    
-    # filter data
-    nb_data_train = os.getenv("NUMBER_DATA_TRAIN")
-    if nb_data_train:
-        df = df.head(int(nb_data_train))
-    
-    return df
+    return get_file_aws(f"Bronze/tweets_collect_{timestamp}.parquet")
 
 
 

@@ -21,19 +21,42 @@ dotenv.load_dotenv()
 
 
 
-# fonction test for insert new data because API twitter is not free
+# fonction to insert new data because API twitter is not free
 def get_tweets():
 
     # get history_tech from AWS S3
     df_history = get_file_aws("data_history.parquet")
+    df_history['date_tweet'] = pd.to_datetime(df_history['date_tweet'] , format='%Y-%m-%d %H:%M:%S')
 
     # read parquet data_to_insert
-    df_bronze = pd.read_parquet("ressources/data/data_to_insert.parquet")
+    df_extract = pd.read_parquet("ressources/data/data_to_insert.parquet")
+    df_extract['date_tweet'] = pd.to_datetime(df_extract['date_tweet'] , format='%Y-%m-%d %H:%M:%S')
+    df_extract['id_user'] = df_extract['id_user'].astype(int)
 
     # create timestamp for file name
     timestamp = str(round(datetime.now().timestamp()))
 
-    # Send df_bronze to AWS S3
+    nb_data_train = os.getenv("NUMBER_DATA_TRAIN")
+    if nb_data_train:
+        nb_data_train = int(int(nb_data_train) / df_history['id_user'].nunique())
+            
+        # get for each id_user, tweets with df_extract.date_tweet > df_history.date_tweet not nb_data_train
+        df_bronze = pd.concat([
+            df_extract.loc[
+                (df_extract['id_user'] == id_user) &
+                (df_extract['date_tweet'] > df_history.loc[df_history['id_user'] == id_user, 'date_tweet'].max())
+            ].sort_values(by='date_tweet').iloc[:nb_data_train]
+            for id_user in df_history['id_user'].unique()
+        ])
+    else:
+        df_bronze = df_extract
+
+    
+    if df_bronze.empty:
+        print("No new data to insert")
+        return
+
+    # Send df_extract to AWS S3
     send_to_aws(df_bronze, f"Bronze/tweets_collect_{timestamp}.parquet")
 
     # update history_tech
