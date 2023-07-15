@@ -7,6 +7,8 @@ Small tweet user sentiment analysis project
 
 
 
+
+---
 ## Install
 
 1. Clone the project
@@ -49,9 +51,7 @@ pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}
 
 
 
-
-
-
+---
 ## Setup
 
 1. Setup .env file in base directory (create it)
@@ -81,7 +81,6 @@ BEARER_TOKEN = ''
 NUMBER_DATA_TRAIN = 1000
 ```
 
-
 2. Aiflow.cfg
 
 In file airflow/airflow.cfg remove the exemple dags
@@ -93,6 +92,9 @@ load_examples = False
 
 
 
+
+
+---
 ## Lauch
 
 1. Launch Airflow
