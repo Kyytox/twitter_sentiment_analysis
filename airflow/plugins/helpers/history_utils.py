@@ -1,6 +1,5 @@
 import pandas as pd
 import datetime
-import sys
 from pathlib import Path
 
 
@@ -8,13 +7,13 @@ from pathlib import Path
 from helpers.aws_utils import check_file_aws
 from helpers.aws_utils import send_to_aws
 
-PATH_HISTORY_FILE = "plugins/data_history_tech.xlsx"
+PLUGINS_DIR = Path(__file__).parent.parent
 
 
 # Update history_tech after create bronze
-def update_history_tech(df_old_history_tech, df_bronze, timestamp):
+def update_history_tech(df_old_history, df_bronze, timestamp):
     # # create DataFrame
-    df_new_history_tech = pd.DataFrame()
+    df_new_history = pd.DataFrame()
 
     today = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -24,8 +23,6 @@ def update_history_tech(df_old_history_tech, df_bronze, timestamp):
         last_id_tweet = str(df_bronze[df_bronze['id_user'] == user]['id_tweet'].max())
 
         # get last date_tweet
-        # date_tweet = df_bronze[df_bronze['id_user']
-        #                     == user]['date_tweet'].max().strftime("%Y-%m-%d %H:%M:%S")
         date_tweet = df_bronze[df_bronze['id_user']== user]['date_tweet'].max()
 
         # get name_user
@@ -40,33 +37,27 @@ def update_history_tech(df_old_history_tech, df_bronze, timestamp):
                 'date_tweet': date_tweet}
         
 
-        df_new_history_tech = pd.concat([df_new_history_tech, pd.DataFrame(new_row, index=[0])],ignore_index=True)
+        df_new_history = pd.concat([df_new_history, pd.DataFrame(new_row, index=[0])],ignore_index=True)
 
     # concat old and new DataFrame
-    df_new_history_tech = pd.concat([df_old_history_tech, df_new_history_tech], ignore_index=True).reset_index(drop=True)
-    df_new_history_tech['id_user'] = df_new_history_tech['id_user'].astype(int)
-    df_new_history_tech['last_id_tweet'] = df_new_history_tech['last_id_tweet'].astype(int)
-    df_new_history_tech['timestamp_last_update'] = df_new_history_tech['timestamp_last_update'].astype(int)
-    print('types: ', df_new_history_tech.last_id_tweet.unique())
-    print('types: ', df_new_history_tech.dtypes)
+    df_new_history = pd.concat([df_old_history, df_new_history], ignore_index=True).reset_index(drop=True)
+    df_new_history['id_user'] = df_new_history['id_user'].astype(int)
+    df_new_history['last_id_tweet'] = df_new_history['last_id_tweet'].astype(int)
+    df_new_history['timestamp_last_update'] = df_new_history['timestamp_last_update'].astype(int)
 
     # Send df to AWS S3
-    send_to_aws(df_new_history_tech, "history_tech.parquet")
+    send_to_aws(df_new_history, "data_history.parquet")
 
 
 
 # create parquet history_tech if not exists
 def create_history_tech():
 
-    print("######################################################")
-    print("check history_tech.parquet")
-    
-    # check if file exists
-    test = check_file_aws("history_tech.parquet")
-    print(test)
-    if test == None:
+    if check_file_aws("data_history.parquet") == False:
+        
         # extract history Excel file
-        df = pd.read_excel(PATH_HISTORY_FILE, engine="openpyxl")
+        file_path = "ressources/data/data_history.xlsx"
+        df = pd.read_excel(file_path, engine="openpyxl")
 
         # Send to AWS S3
-        send_to_aws(df, "history_tech.parquet")
+        send_to_aws(df, "data_history.parquet")

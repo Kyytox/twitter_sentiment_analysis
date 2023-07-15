@@ -36,7 +36,6 @@ def connect_aws():
 # get file from AWS S3
 def get_file_aws(key_file):
     print("----------get file from aws----------")
-    print("key_file : ", key_file)
 
     # create S3 client
     s3 = connect_aws()
@@ -54,10 +53,6 @@ def get_file_aws(key_file):
 
 def get_partitionned_file_aws(key_file):
     print("----------get partitionned file from aws----------")
-    print("key_file : ", key_file)
-
-    # create S3 client
-    s3 = connect_aws()
 
     # get parquet from S3
     df = wr.s3.read_parquet(path=f"s3://{AWS_BUCKET_NAME}/{key_file}")
@@ -70,7 +65,6 @@ def get_partitionned_file_aws(key_file):
 # check if file exist in AWS S3
 def check_file_aws(key_file):
     print("----------check file in aws----------")
-    print("key_file : ", key_file)
 
     # create S3 client
     s3 = connect_aws()
@@ -91,8 +85,6 @@ def check_file_aws(key_file):
 # send parquet to AWS S3
 def send_to_aws(df, key_file):
     print("----------send to aws----------")
-    print("key_file : ", key_file)
-
 
     # create path file
     path_file = f"s3://{AWS_BUCKET_NAME}/{key_file}"
@@ -108,8 +100,6 @@ def send_to_aws(df, key_file):
 # send partitionned parquet to AWS S3
 def send_to_aws_partition(df, key_file):
     print("----------send partitionned to aws----------")
-    print("key_file : ", key_file)
-
 
     # get bucket name
     path_file = f"s3://{AWS_BUCKET_NAME}/{key_file}"

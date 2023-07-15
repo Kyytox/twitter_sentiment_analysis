@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 import sys
 from pathlib import Path
@@ -17,7 +16,6 @@ from airflow.plugins.helpers.aws_utils import get_partitionned_file_aws
 
 # Data Viz utils
 import vizualisation.display_graph as dg
-
 
 
 # Constants

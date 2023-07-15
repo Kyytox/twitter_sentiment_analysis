@@ -1,19 +1,18 @@
 # Import libraries
 from transformers import AutoModelForSequenceClassification
-from transformers import TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer, AutoConfig
 from scipy.special import softmax
 import pandas as pd
 import numpy as np
-import sys
-from pathlib import Path
-
+import os
+import dotenv
 
 # helpers
 from helpers.aws_utils import get_file_aws
 from helpers.aws_utils import send_to_aws_partition
 
 
+dotenv.load_dotenv()
 
 """
 Transform data
@@ -38,32 +37,21 @@ def load_model():
 
 
 
-# # if u want save Model in local
-# def save_model(tokenizer, config, model):
-#     tokenizer.save_pretrained(MODEL)
-#     config.save_pretrained(MODEL)
-#     model.save_pretrained(MODEL)
-
-
-
 def get_data():
     # get history_tech from AWS S3
-    df_history_tech = get_file_aws("history_tech.parquet")
+    df_history = get_file_aws("data_history.parquet")
 
     # get last timestamp
-    timestamp = df_history_tech['timestamp_last_update'].max()
-    print(f"timestamp: {timestamp}")
+    timestamp = df_history['timestamp_last_update'].max()
 
     # get parquet file from AWS S3
     df = get_file_aws(f"Bronze/tweets_collect_{timestamp}.parquet")
     
+    # filter data
+    nb_data_train = os.getenv("NUMBER_DATA_TRAIN")
+    if nb_data_train:
+        df = df.head(int(nb_data_train))
     
-    ############
-    # for test #
-    ############
-    # keep only 200 rows
-    # df = df.head(200)
-
     return df
 
 
@@ -71,7 +59,6 @@ def get_data():
 # Format tweets for use in model
 # remove specific caract usefull for help IA
 def format_text(text):
-    # text = text.lower()
 
     # remove special characters
     text = text.replace('\n', ' ').replace('\r', '')
@@ -154,10 +141,6 @@ def transform_data():
     # load model
     tokenizer, config, model = load_model()
 
-    # Save Model in local if not exist
-    # if not Path("./cardiffnlp").exists():
-    #     save_model(tokenizer, config, model)
-
     # get data
     df = get_data()
 
@@ -170,11 +153,8 @@ def transform_data():
 
     # reindex df
     df = pd.merge(df, df_sentiment, on="id_tweet")
-    print(df.head(100))
 
     # Send to AWS S3
-    # send_to_aws_partition(df, "Gold/tweets_transform.parquet")
-
-
+    send_to_aws_partition(df, "Gold/tweets_transform.parquet")
 
     return df
