@@ -45,19 +45,17 @@ def get_file_aws(key_file):
     parquet_buffer = io.BytesIO(parquet_object)
 
     # read parquet buffer
-    df = pd.read_parquet(parquet_buffer)
-
-    return df
+    return pd.read_parquet(parquet_buffer)
 
 
 
 def get_partitionned_file_aws(key_file):
     print("----------get partitionned file from aws----------")
 
-    # get parquet from S3
-    df = wr.s3.read_parquet(path=f"s3://{AWS_BUCKET_NAME}/{key_file}")
+    sess = boto3.Session(aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
 
-    return df
+    # get parquet from S3
+    return wr.s3.read_parquet(path=f"s3://{AWS_BUCKET_NAME}/{key_file}", boto3_session=sess)
 
 
 
@@ -86,13 +84,10 @@ def check_file_aws(key_file):
 def send_to_aws(df, key_file):
     print("----------send to aws----------")
 
-    # create path file
-    path_file = f"s3://{AWS_BUCKET_NAME}/{key_file}"
-
     # upload file to S3
     wr.s3.to_parquet(
         df=df,
-        path=path_file,
+        path=f"s3://{AWS_BUCKET_NAME}/{key_file}",
     )
 
 
@@ -101,13 +96,13 @@ def send_to_aws(df, key_file):
 def send_to_aws_partition(df, key_file):
     print("----------send partitionned to aws----------")
 
-    # get bucket name
-    path_file = f"s3://{AWS_BUCKET_NAME}/{key_file}"
+    sess = boto3.Session(aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
 
     # send to aws
     wr.s3.to_parquet(df,
-                    path_file,
+                    f"s3://{AWS_BUCKET_NAME}/{key_file}",
                     partition_cols=['id_user'],
                     dataset=True,
                     mode="append",
-                    compression='snappy')
+                    compression='snappy',
+                    boto3_session=sess)
