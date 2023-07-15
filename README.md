@@ -81,6 +81,15 @@ BEARER_TOKEN = ''
 NUMBER_DATA_TRAIN = 1000
 ```
 
+2. Aiflow.cfg
+
+In file airflow/airflow.cfg remove the exemple dags
+
+```
+# Line 66
+load_examples = False
+```
+
 ## Lauch
 
 1. Launch Airflow
