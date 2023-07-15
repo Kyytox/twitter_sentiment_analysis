@@ -196,13 +196,8 @@ airflow/*.txt
 airflow/*.pid
 airflow/venv
 
-data
-airflow/cardiffnlp/twitter-roberta-base-sentiment-latest/
-streamlit/venv_streamlit/
-airflow/venv_airflow/
-airflow/plugins/df_regoup_data (copie).parquet
-airflow/plugins/data_test.parquet
-streamlit/venv_streamlit/
+
+# nltk 
 nltk/
 
 
