@@ -1,15 +1,91 @@
-# twitter_sentiment_analysis
 
 Small tweet user sentiment analysis project
 
-![alt process](https://github.com/Kyytox/twitter_sentiment_analysis/blob/master/ressources/media/whiteboard_process_data.png)
+
+
+
+
+
+
+
 
 
 
 
 
 ---
-## Install
+# Architecture
+
+![alt process](https://github.com/Kyytox/twitter_sentiment_analysis/blob/master/ressources/media/whiteboard_process_data.png)
+
+
+Airflow => Orchestration of the process
+AWS S3 => Storage of data
+Streamlit => Display of the results
+Python => Treatment of data
+ML => [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
+.parquet => Data format
+
+
+
+
+
+---
+# Process
+
+Since June 2021, Twitter has restricted access to his V2 API.
+Thus, it is no longer possible to recover user tweets.
+
+So I recovered the user tweets that I could before this date and stored them in a .parquet file.
+It's with this file that I will work for the process.
+You find this file in the folder **ressources/data/data_to_insert.parquet**
+
+With Param NUMBER_DATA_TRAIN in .env file, you can choose the number of tweets extract from the data_to_insert.parquet file for the process. 
+❗⚠ **So Twitter API V2 is no longer used for this project.** ❗⚠ 
+
+
+The process is divided into 3 parts:
+
+### 1. Check data_history
+
+Check if the data_history.parquet file exists in AWS S3.
+If not, a new file is created with template ressources/data/data_history.xlsx
+
+This file contains the tweets already treated by the process.
+
+columns:
+date_last_update | timestamp_last_update | id_user | name_user | last_id_tweet | date_tweet
+
+
+
+
+### 2. Extract data
+
+Extract data from data_to_insert.parquet file
+According to the NUMBER_DATA_TRAIN parameter, and df_data_history, the process will extract the tweets to be treated.
+
+columns:
+name_user	date_tweet	id_tweet	text_formatted_tweet	nb_interactions	retweet_count	reply_count	like_count	quote_count	sentiment	score	negative	neutral	positive	id_user
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+# Install
 
 1. Clone the project
 2. Create Python Environement in base directory
@@ -52,7 +128,7 @@ pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}
 
 
 ---
-## Setup
+# Setup
 
 1. Setup .env file in base directory (create it)
 ```
@@ -71,12 +147,12 @@ BEARER_TOKEN = ''
 # Parameters for treatment of data
 # In June 2023, Twitter restricted access to API V2
 # So we could no longer recover the tweets from the users
-# A data_to_inst.parquet file was created with all the tweets that I was able to recover
+# A data_to_insert.parquet file was created with all the tweets that I was able to recover
 # 207613 tweets ago
 # For model training, the NUMBER_DATA_TRAIN parameter allows you to choose the number of tweets to use for treatment
 
 # If you put the line in the comments, all the tweets will be used and treated by the ML (207613 tweets)
-# If you put a number, for example 1000, the first 1000 tweets of the data_to_inst.parquet file will be used and treated by the process
+# If you put a number, for example 1000, the first 1000 tweets of the data_to_insert.parquet file will be used and treated by the process
 
 NUMBER_DATA_TRAIN = 1000
 ```
@@ -95,7 +171,7 @@ load_examples = False
 
 
 ---
-## Lauch
+# Lauch
 
 1. Launch Airflow
 ```
@@ -109,3 +185,13 @@ airflow standalone
 ```
 streamlit run streamlit/Home.py
 ```
+
+
+
+
+
+
+
+
+
+
