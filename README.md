@@ -4,6 +4,9 @@ Small tweet user sentiment analysis project
 
 ![alt process](https://github.com/Kyytox/twitter_sentiment_analysis/blob/master/ressources/media/whiteboard_process_data.png)
 
+
+
+
 ## Install
 
 1. Clone the project
@@ -14,23 +17,24 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-3. Install requirements.txt
 
+3. Install requirements.txt
 ```
 pip install -r requirements.txt
 ```
 
+
 4. Install Airflow
-   U can go to [Airflow Quickstart ](https://airflow.apache.org/docs/apache-airflow/stable/start.html)
+
+U can go to [Airflow Quickstart ](https://airflow.apache.org/docs/apache-airflow/stable/start.html)
 
 define AIRFLOW_HOME 'twitter_sentiment_analysis/airflow'
-
 ```
 export AIRFLOW_HOME="YOUR_PATH"
 ```
 
-install airflow
 
+install airflow
 ```
 AIRFLOW_VERSION=2.6.3
 
@@ -41,21 +45,17 @@ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${A
 # For example this would install 2.6.3 with python 3.7: https://raw.githubusercontent.com/apache/airflow/constraints-2.6.3/constraints-3.7.txt
 
 pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
-
 ```
 
-Launch Airflow
 
-```
-airflow standalone
-```
+
+
+
 
 ## Setup
 
 1. Setup .env file in base directory (create it)
-
 ```
-
 # ------------- Credentials -------------
 # AWS Credentials
 AWS_ACCESS_KEY = ''
@@ -81,27 +81,29 @@ BEARER_TOKEN = ''
 NUMBER_DATA_TRAIN = 1000
 ```
 
+
 2. Aiflow.cfg
 
 In file airflow/airflow.cfg remove the exemple dags
-
 ```
 # Line 66
 load_examples = False
 ```
 
+
+
+
 ## Lauch
 
 1. Launch Airflow
-
 ```
 airflow standalone
 ```
 
+
 ❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file Gold/tweets_transform.parquet/ in AWS S3❗⚠
 
 2. Launch Streamlit
-
 ```
 streamlit run streamlit/Home.py
 ```

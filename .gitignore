@@ -40,3 +40,4 @@ airflow/*.pid
 # nltk 
 nltk/
 
+.prettierignore
