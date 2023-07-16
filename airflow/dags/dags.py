@@ -19,15 +19,15 @@ from operators.transform_data import transform_data
 
 with DAG(
     "tweets_sentiment_analysis",
-    # default_args={
-    #     "depends_on_past": False,
-    #     "retries": 1,
-    #     "retry_delay": timedelta(minutes=5),
-    # },
+    default_args={
+        "depends_on_past": False,
+        "retries": 1,
+        "retry_delay": timedelta(minutes=10),
+    },
     description="Get tweets for analysis sentiment with ML",
     schedule='@hourly',
     # schedule='@once',
-    start_date=datetime(2023, 6, 1),
+    start_date=datetime(2023, 7, 1),
     catchup=False,
     tags=["tweets, ML, sentiment analysis"],
 
