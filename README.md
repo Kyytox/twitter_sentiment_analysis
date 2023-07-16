@@ -49,7 +49,7 @@ The process is divided into 3 parts:
 ### 1. Check data_history
 
 Check if the data_history.parquet file exists in AWS S3.
-If not, a new file is created with template ressources/data/data_history.xlsx
+If not, a new file is created with template **ressources/data/data_history.xlsx**
 
 This file contains the tweets already treated by the process.
 
@@ -70,17 +70,29 @@ columns:
 |-----------|------------|----------|----------------------|-----------------|---------------|-------------|------------|-------------|-----------|-------|----------|---------|----------|---------|
 
 
+The new data is stored in **Bronze/tweets_collect_{timestamp}.parquet** in AWS S3
 
 
 
 
+### 3. Transform data
+======
+
+Get Last file in Bronze folder in AWS S3
+
+Load the model [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
+
+Format the text of the tweets
+
+Predict the sentiment of the tweets
+
+columns:
+| name_user | date_tweet | id_tweet | text_formatted_tweet | nb_interactions | retweet_count | reply_count | like_count | quote_count | sentiment | score | negative | neutral | positive | id_user |
+|-----------|------------|----------|----------------------|-----------------|---------------|-------------|------------|-------------|-----------|-------|----------|---------|----------|---------|
 
 
-
-
-
-
-
+The new data is stored in **Gold/tweets_transform.parquet** in AWS S3
+The parquet file is partitioned by id_user
 
 
 
