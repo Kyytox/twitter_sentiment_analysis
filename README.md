@@ -1,18 +1,6 @@
 
 Small tweet user sentiment analysis project
 
-
-
-
-
-
-
-
-
-
-
-
-
 ---
 # Architecture
 
@@ -118,6 +106,7 @@ Predict the sentiment of the tweets
 
 The new data is stored in **Gold/tweets_transform.parquet** in AWS S3
 The parquet file is partitioned by id_user
+
 
 
 
