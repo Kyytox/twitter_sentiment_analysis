@@ -56,6 +56,8 @@ This file contains the tweets already treated by the process.
 Extract data from data_to_insert.parquet file
 According to the NUMBER_DATA_TRAIN parameter, and df_data_history, the process will extract the tweets to be treated.
 
+The new data is stored in **Bronze/tweets_collect_{timestamp}.parquet** in AWS S3
+
 | Column | Type |
 |--------|------|
 | id_user | int64 |
@@ -70,7 +72,6 @@ According to the NUMBER_DATA_TRAIN parameter, and df_data_history, the process w
 | quote_count | int64 |
 
 
-The new data is stored in **Bronze/tweets_collect_{timestamp}.parquet** in AWS S3
 
 
 
@@ -84,6 +85,8 @@ Load the model [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingfa
 Format the text of the tweets
 
 Predict the sentiment of the tweets
+
+The new data is stored in **Gold/tweets_transform.parquet** in AWS S3
 
 | Column | Type |
 |--------|------|
@@ -104,7 +107,6 @@ Predict the sentiment of the tweets
 | positive | float64 |
 
 
-The new data is stored in **Gold/tweets_transform.parquet** in AWS S3
 The parquet file is partitioned by id_user
 
 
