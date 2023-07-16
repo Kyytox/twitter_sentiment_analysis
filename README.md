@@ -46,6 +46,8 @@ So I recovered the user tweets that I could before this date and stored them in 
 It's with this file that I will work for the process.
 You find this file in the folder **ressources/data/data_to_insert.parquet**
 
+This file contains 207613 tweets
+
 With Param NUMBER_DATA_TRAIN in .env file, you can choose the number of tweets extract from the data_to_insert.parquet file for the process.
 
 ❗⚠ **So Twitter API V2 is no longer used for this project.** ❗⚠ 
