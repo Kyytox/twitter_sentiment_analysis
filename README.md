@@ -34,10 +34,9 @@ Small tweet user sentiment and interactions analysis project.
 - ML : [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
 
 
----
 <br/>
 
-
+---
 # Process
 
 Since June 2023, Twitter has restricted access to his V2 API.
@@ -125,9 +124,9 @@ The parquet file is partitioned by id_user
 | positive | float64 |
 
 
----
 <br/>
 
+---
 # Visualisation
 
 Streamlit is used to display the results of the process.
@@ -177,9 +176,9 @@ Display the most frequent words of the tweets of the user selected in the dropdo
 
 
 
----
 <br/>
 
+---
 # Install
 
 #### 1. Clone the project
@@ -218,9 +217,9 @@ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${A
 pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
 ```
 
----
 <br/>
 
+---
 # Setup
 
 #### 1. Setup .env file in base directory (create it)
@@ -259,9 +258,9 @@ In file airflow/airflow.cfg remove the exemple dags
 load_examples = False
 ```
 
----
 <br/>
 
+---
 # Launch
 
 ❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file **Gold/tweets_transform.parquet/** in AWS S3❗⚠
