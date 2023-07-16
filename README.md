@@ -26,12 +26,12 @@ Small tweet user sentiment and interactions analysis project.
 
 ![alt process](https://github.com/Kyytox/twitter_sentiment_analysis/blob/master/ressources/media/whiteboard_process_data.png)
 
-- Airflow: Process orchestration
-- AWS S3: Data storage
-- Streamlit: Display of results
-- Python: Data processing
-- .Parquet: Data format
-- ML : [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
+- **Airflow**: Process orchestration
+- **AWS S3**: Data storage
+- **Streamlit**: Display of results
+- **Python**: Data processing
+- **.Parquet**: Data format
+- **ML Model**: [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
 
 
 <br/>
