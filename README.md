@@ -1,7 +1,7 @@
 
-Small tweet user sentiment analysis project
+Small tweet user sentiment and interactions analysis project.
 
----
+
 <br/>
 
 # Table of Contents
@@ -19,9 +19,9 @@ Small tweet user sentiment analysis project
 - [Setup](#setup)
 - [Launch](#launch)
 
-
 <br/>
 
+---
 # Architecture
 
 ![alt process](https://github.com/Kyytox/twitter_sentiment_analysis/blob/master/ressources/media/whiteboard_process_data.png)
