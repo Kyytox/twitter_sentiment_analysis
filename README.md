@@ -184,8 +184,12 @@ Display the most frequent words of the tweets of the user selected in the dropdo
 # Install
 
 #### 1. Clone the project
-#### 2. Create Python Environement in base directory
+```
+git clone https://github.com/Kyytox/twitter_sentiment_analysis.git
+```
 
+
+#### 2. Create Python Environement in base directory
 ```
 python -m venv venv
 source venv/bin/activate
