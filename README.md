@@ -1,9 +1,9 @@
 
 Small tweet user sentiment analysis project
 
+---
 <br/>
 
----
 # Table of Contents
 
 - [Architecture](#architecture)
@@ -19,10 +19,9 @@ Small tweet user sentiment analysis project
 - [Setup](#setup)
 - [Launch](#launch)
 
-
+---
 <br/>
 
----
 # Architecture
 
 ![alt process](https://github.com/Kyytox/twitter_sentiment_analysis/blob/master/ressources/media/whiteboard_process_data.png)
@@ -35,12 +34,13 @@ Small tweet user sentiment analysis project
 - ML : [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
 
 
+---
 <br/>
 
----
+
 # Process
 
-Since June 2021, Twitter has restricted access to his V2 API.
+Since June 2023, Twitter has restricted access to his V2 API.
 Thus, it is no longer possible to recover user tweets.
 
 So I recovered the user tweets that I could before this date and stored them in a .parquet file.
@@ -125,20 +125,17 @@ The parquet file is partitioned by id_user
 | positive | float64 |
 
 
+---
 <br/>
 
----
 # Visualisation
 
 Streamlit is used to display the results of the process.
 
-<br/>
 
-## 1. Sentiment Analysis
+## 1. Sentiment
 
 Display the sentiment analysis of the tweets of the user selected in the dropdown list.
-
-Graphs used:
 
 - Pie chart
 	- Distribution of the sentiment of the tweets
@@ -160,8 +157,6 @@ Graphs used:
 
 Display the interactions of the tweets of the user selected in the dropdown list.
 
-Graphs used:
-
 - Line chart
 	- Number of total interactions (multitple interval of time)
 
@@ -177,16 +172,14 @@ Graphs used:
 
 Display the most frequent words of the tweets of the user selected in the dropdown list.
 
-Graphs used:
-
 - Wordcloud
 	- Most 200 frequent words of the tweets
 
 
 
+---
 <br/>
 
----
 # Install
 
 #### 1. Clone the project
@@ -225,9 +218,9 @@ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${A
 pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
 ```
 
+---
 <br/>
 
----
 # Setup
 
 #### 1. Setup .env file in base directory (create it)
@@ -266,22 +259,22 @@ In file airflow/airflow.cfg remove the exemple dags
 load_examples = False
 ```
 
+---
 <br/>
 
----
 # Lauch
 
 ❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file **Gold/tweets_transform.parquet/** in AWS S3❗⚠
 
 <br/>
 
-#### 1. Launch Airflow
+#### 1. Airflow
 ```
 airflow standalone
 ```
 <br/>
 
-#### 2. Launch Streamlit
+#### 2. Streamlit
 ```
 streamlit run streamlit/Home.py
 ```
