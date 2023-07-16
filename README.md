@@ -1,6 +1,26 @@
 
 Small tweet user sentiment analysis project
 
+
+---
+# Table of Contents
+
+- [Architecture](#architecture)
+- [Process](#process)
+    - [1. Check data_history](#1-check-data_history)
+    - [2. Extract data](#2-extract-data)
+    - [3. Transform data](#3-transform-data)
+- [Visualisation](#visualisation)
+    - [1. Sentiment Analysis](#1-sentiment-analysis)
+    - [2. Interactions](#2-interactions)
+    - [3. Frequent Words](#3-frequent-words)
+- [Install](#install)
+- [Setup](#setup)
+- [Launch](#launch)
+
+
+
+
 ---
 # Architecture
 
@@ -26,7 +46,8 @@ So I recovered the user tweets that I could before this date and stored them in 
 It's with this file that I will work for the process.
 You find this file in the folder **ressources/data/data_to_insert.parquet**
 
-With Param NUMBER_DATA_TRAIN in .env file, you can choose the number of tweets extract from the data_to_insert.parquet file for the process. 
+With Param NUMBER_DATA_TRAIN in .env file, you can choose the number of tweets extract from the data_to_insert.parquet file for the process.
+
 ❗⚠ **So Twitter API V2 is no longer used for this project.** ❗⚠ 
 
 
@@ -50,7 +71,6 @@ This file contains the tweets already treated by the process.
 
 
 
-
 ## 2. Extract data
 
 Extract data from data_to_insert.parquet file
@@ -70,8 +90,6 @@ The new data is stored in **Bronze/tweets_collect_{timestamp}.parquet** in AWS S
 | reply_count | int64 |
 | like_count | int64 |
 | quote_count | int64 |
-
-
 
 
 
@@ -174,8 +192,8 @@ Graphs used:
 ---
 # Install
 
-1. Clone the project
-2. Create Python Environement in base directory
+#### 1. Clone the project
+#### 2. Create Python Environement in base directory
 
 ```
 python -m venv venv
@@ -183,13 +201,13 @@ source venv/bin/activate
 ```
 
 
-3. Install requirements.txt
+#### 3. Install requirements.txt
 ```
 pip install -r requirements.txt
 ```
 
 
-4. Install Airflow
+#### 4. Install Airflow
 
 U can go to [Airflow Quickstart ](https://airflow.apache.org/docs/apache-airflow/stable/start.html)
 
@@ -198,8 +216,6 @@ define AIRFLOW_HOME 'twitter_sentiment_analysis/airflow'
 export AIRFLOW_HOME="YOUR_PATH"
 ```
 
-
-install airflow
 ```
 AIRFLOW_VERSION=2.6.3
 
@@ -217,7 +233,7 @@ pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}
 ---
 # Setup
 
-1. Setup .env file in base directory (create it)
+#### 1. Setup .env file in base directory (create it)
 ```
 # ------------- Credentials -------------
 # AWS Credentials
@@ -244,7 +260,7 @@ BEARER_TOKEN = ''
 NUMBER_DATA_TRAIN = 1000
 ```
 
-2. Aiflow.cfg
+#### 2. Aiflow.cfg
 
 In file airflow/airflow.cfg remove the exemple dags
 ```
@@ -260,7 +276,7 @@ load_examples = False
 ---
 # Lauch
 
-1. Launch Airflow
+#### 1. Launch Airflow
 ```
 airflow standalone
 ```
@@ -268,7 +284,7 @@ airflow standalone
 
 ❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file Gold/tweets_transform.parquet/ in AWS S3❗⚠
 
-2. Launch Streamlit
+#### 2. Launch Streamlit
 ```
 streamlit run streamlit/Home.py
 ```
