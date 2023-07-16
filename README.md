@@ -1,6 +1,7 @@
 
 Small tweet user sentiment analysis project
 
+<br/>
 
 ---
 # Table of Contents
@@ -19,7 +20,7 @@ Small tweet user sentiment analysis project
 - [Launch](#launch)
 
 
-
+<br/>
 
 ---
 # Architecture
@@ -34,7 +35,7 @@ Small tweet user sentiment analysis project
 - ML : [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
 
 
-
+<br/>
 
 ---
 # Process
@@ -50,8 +51,7 @@ With Param NUMBER_DATA_TRAIN in .env file, you can choose the number of tweets e
 
 ❗⚠ **So Twitter API V2 is no longer used for this project.** ❗⚠ 
 
-
-The process is divided into 3 parts:
+<br/>
 
 ## 1. Check data_history
 
@@ -69,7 +69,7 @@ This file contains the tweets already treated by the process.
 | last_id_tweet | int64 |
 | date_tweet | datetime64[ns] |
 
-
+<br/>
 
 ## 2. Extract data
 
@@ -91,8 +91,7 @@ The new data is stored in **Bronze/tweets_collect_{timestamp}.parquet** in AWS S
 | like_count | int64 |
 | quote_count | int64 |
 
-
-
+<br/>
 
 ## 3. Transform data
 
@@ -126,13 +125,14 @@ The parquet file is partitioned by id_user
 | positive | float64 |
 
 
-
+<br/>
 
 ---
 # Visualisation
 
 Streamlit is used to display the results of the process.
 
+<br/>
 
 ## 1. Sentiment Analysis
 
@@ -154,7 +154,7 @@ Graphs used:
 - Box chart
 	- Demonstrating the locatity, spread and skewness of the sentiment
 
-
+<br/>
 
 ## 2. Interactions
 
@@ -171,9 +171,7 @@ Graphs used:
 - Pie chart
 	- Distribution of the interactions by type and by sentiment
 
-
-
-
+<br/>
 
 ## 3. Frequent Words
 
@@ -186,8 +184,7 @@ Graphs used:
 
 
 
-
-
+<br/>
 
 ---
 # Install
@@ -228,7 +225,7 @@ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${A
 pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
 ```
 
-
+<br/>
 
 ---
 # Setup
@@ -260,6 +257,7 @@ BEARER_TOKEN = ''
 NUMBER_DATA_TRAIN = 1000
 ```
 
+
 #### 2. Aiflow.cfg
 
 In file airflow/airflow.cfg remove the exemple dags
@@ -268,21 +266,20 @@ In file airflow/airflow.cfg remove the exemple dags
 load_examples = False
 ```
 
-
-
-
-
+<br/>
 
 ---
 # Lauch
+
+❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file **Gold/tweets_transform.parquet/** in AWS S3❗⚠
+
+<br/>
 
 #### 1. Launch Airflow
 ```
 airflow standalone
 ```
-
-
-❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file Gold/tweets_transform.parquet/ in AWS S3❗⚠
+<br/>
 
 #### 2. Launch Streamlit
 ```
