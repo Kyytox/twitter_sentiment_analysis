@@ -262,7 +262,7 @@ load_examples = False
 ---
 <br/>
 
-# Lauch
+# Launch
 
 ❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file **Gold/tweets_transform.parquet/** in AWS S3❗⚠
 
