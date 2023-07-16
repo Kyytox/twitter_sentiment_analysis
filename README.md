@@ -132,7 +132,7 @@ The parquet file is partitioned by id_user
 If u want use the process with Twitter API V2:
 Go to Airflow/dags/dags.py
 
--   uncomment the task 2 who call **get_tweets_with_tweepy**
+-   uncomment the task 3 who call **get_tweets_with_tweepy**
 -   comment the task 3 who call **get_tweets**
 ❗⚠
 
