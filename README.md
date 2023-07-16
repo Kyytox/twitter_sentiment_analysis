@@ -46,28 +46,42 @@ With Param NUMBER_DATA_TRAIN in .env file, you can choose the number of tweets e
 
 The process is divided into 3 parts:
 
-### 1. Check data_history
+## 1. Check data_history
 
 Check if the data_history.parquet file exists in AWS S3.
 If not, a new file is created with template **ressources/data/data_history.xlsx**
 
 This file contains the tweets already treated by the process.
 
-columns:
-| date_last_update | timestamp_last_update | id_user | name_user | last_id_tweet | date_tweet |
-|------------------|-----------------------|---------|-----------|---------------|------------|
+| Column | Type |
+|--------|------|
+| date_last_update | object |
+| timestamp_last_update | int64 |
+| id_user | int64 |
+| name_user | object |
+| last_id_tweet | int64 |
+| date_tweet | datetime64[ns] |
 
 
 
 
-### 2. Extract data
+## 2. Extract data
 
 Extract data from data_to_insert.parquet file
 According to the NUMBER_DATA_TRAIN parameter, and df_data_history, the process will extract the tweets to be treated.
 
-columns:
-| name_user | date_tweet | id_tweet | text_formatted_tweet | nb_interactions | retweet_count | reply_count | like_count | quote_count | sentiment | score | negative | neutral | positive | id_user |
-|-----------|------------|----------|----------------------|-----------------|---------------|-------------|------------|-------------|-----------|-------|----------|---------|----------|---------|
+| Column | Type |
+|--------|------|
+| id_user | int64 |
+| name_user | object |
+| date_tweet | datetime64[ns] |
+| id_tweet | int64 |
+| text_tweet | object |
+| nb_interactions | int64 |
+| retweet_count | int64 |
+| reply_count | int64 |
+| like_count | int64 |
+| quote_count | int64 |
 
 
 The new data is stored in **Bronze/tweets_collect_{timestamp}.parquet** in AWS S3
@@ -75,8 +89,7 @@ The new data is stored in **Bronze/tweets_collect_{timestamp}.parquet** in AWS S
 
 
 
-### 3. Transform data
-======
+## 3. Transform data
 
 Get Last file in Bronze folder in AWS S3
 
@@ -86,13 +99,34 @@ Format the text of the tweets
 
 Predict the sentiment of the tweets
 
-columns:
-| name_user | date_tweet | id_tweet | text_formatted_tweet | nb_interactions | retweet_count | reply_count | like_count | quote_count | sentiment | score | negative | neutral | positive | id_user |
-|-----------|------------|----------|----------------------|-----------------|---------------|-------------|------------|-------------|-----------|-------|----------|---------|----------|---------|
+| Column | Type |
+|--------|------|
+| id_user | int64 |
+| name_user | object |
+| date_tweet | datetime64[ns] |
+| id_tweet | int64 |
+| text_formatted_tweet | object |
+| nb_interactions | int64 |
+| retweet_count | int64 |
+| reply_count | int64 |
+| like_count | int64 |
+| quote_count | int64 |
+| sentiment | object |
+| score | float64 |
+| negative | float64 |
+| neutral | float64 |
+| positive | float64 |
 
 
 The new data is stored in **Gold/tweets_transform.parquet** in AWS S3
 The parquet file is partitioned by id_user
+
+
+
+
+---
+# Process
+
 
 
 
