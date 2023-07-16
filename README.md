@@ -19,8 +19,8 @@ Small tweet user sentiment and interactions analysis project.
 
 <br/>
 
----
 
+---
 # Architecture
 
 ![alt process](https://github.com/Kyytox/twitter_sentiment_analysis/blob/master/ressources/media/whiteboard_process_data.png)
@@ -32,10 +32,11 @@ Small tweet user sentiment and interactions analysis project.
 -   **.Parquet**: Data format
 -   **ML Model**: [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
 
+
 <br/>
 
----
 
+---
 # Process
 
 Since June 2023, Twitter has restricted access to his V2 API.
@@ -126,17 +127,20 @@ The parquet file is partitioned by id_user
 <br/>
 <br/>
 
+
+❗⚠
 If u want use the process with Twitter API V2:
 Go to Airflow/dags/dags.py
 
 -   uncomment the task 2 who call **get_tweets_with_tweepy**
 -   comment the task 3 who call **get_tweets**
+❗⚠
 
 <br/>
 <br/>
+
 
 ---
-
 # Visualisation
 
 Streamlit is used to display the results of the process.
@@ -146,17 +150,14 @@ Streamlit is used to display the results of the process.
 Display the sentiment analysis of the tweets of the user selected in the dropdown list.
 
 -   Pie chart
-
     -   Distribution of the sentiment of the tweets
 
 -   Bar chart
-
     -   Number of tweets by sentiment
     -   Number of tweets by sentiment and by month
     -   Number of tweets by sentiment and by day of month
 
 -   Line chart
-
     -   Mean score of the sentiment of the tweets (multitple interval of time)
 
 -   Box chart
@@ -169,11 +170,9 @@ Display the sentiment analysis of the tweets of the user selected in the dropdow
 Display the interactions of the tweets of the user selected in the dropdown list.
 
 -   Line chart
-
     -   Number of total interactions (multitple interval of time)
 
 -   Bar chart
-
     -   Number of interactions by type (retweet, reply, like, quote)
 
 -   Pie chart
@@ -190,34 +189,28 @@ Display the most frequent words of the tweets of the user selected in the dropdo
 
 <br/>
 
----
 
+---
 # Install
 
 #### 1. Clone the project
-
 ```
-
 git clone https://github.com/Kyytox/twitter_sentiment_analysis.git
-
 ```
+
 
 #### 2. Create Python Environement in base directory
-
 ```
-
 python -m venv venv
 source venv/bin/activate
-
 ```
+
 
 #### 3. Install requirements.txt
-
 ```
-
 pip install -r requirements.txt
-
 ```
+
 
 #### 4. Install Airflow
 
@@ -226,13 +219,10 @@ U can go to [Airflow Quickstart ](https://airflow.apache.org/docs/apache-airflow
 define AIRFLOW_HOME 'twitter_sentiment_analysis/airflow'
 
 ```
-
 export AIRFLOW_HOME="YOUR_PATH"
-
 ```
 
 ```
-
 AIRFLOW_VERSION=2.6.3
 
 # Extract the version of Python you have installed. If you're currently using Python 3.11 you may want to set this manually as noted above, Python 3.11 is not yet supported.
@@ -244,19 +234,16 @@ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${A
 # For example this would install 2.6.3 with python 3.7: https://raw.githubusercontent.com/apache/airflow/constraints-2.6.3/constraints-3.7.txt
 
 pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
-
 ```
 
 <br/>
 
----
 
+---
 # Setup
 
 #### 1. Setup .env file in base directory (create it)
-
 ```
-
 # ------------- Credentials -------------
 
 # AWS Credentials
@@ -275,21 +262,16 @@ BEARER_TOKEN = ''
 # Parameters for treatment of data
 
 # In June 2023, Twitter restricted access to API V2
-
 # So we could no longer recover the tweets from the users
 
-# A data_to_insert.parquet file was created with all the tweets that I was able to recover
-
-# 207613 tweets ago
+# A data_to_insert.parquet file was created with all the tweets that I was able to recover 207613 tweets ago
 
 # For model training, the NUMBER_DATA_TRAIN parameter allows you to choose the number of tweets to use for treatment
 
 # If you put the line in the comments, all the tweets will be used and treated by the ML (207613 tweets)
-
 # If you put a number, for example 1000, the first 1000 tweets of the data_to_insert.parquet file will be used and treated by the process
 
 NUMBER_DATA_TRAIN = 1000
-
 ```
 
 #### 2. Aiflow.cfg
@@ -297,17 +279,15 @@ NUMBER_DATA_TRAIN = 1000
 In file airflow/airflow.cfg remove the exemple dags
 
 ```
-
 # Line 66
 
 load_examples = False
-
 ```
 
 <br/>
 
----
 
+---
 # Launch
 
 ❗⚠ before Launch Streamlit, you need to launch the airflow DAG "twitter_sentiment_analysis" and wait the end of the process, because the streamlit app use the data of file **Gold/tweets_transform.parquet/** in AWS S3❗⚠
@@ -317,9 +297,7 @@ load_examples = False
 #### 1. Airflow
 
 ```
-
 airflow standalone
-
 ```
 
 <br/>
@@ -327,11 +305,6 @@ airflow standalone
 #### 2. Streamlit
 
 ```
-
 streamlit run streamlit/Home.py
-
 ```
 
-```
-
-```
