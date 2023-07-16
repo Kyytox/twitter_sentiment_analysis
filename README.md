@@ -110,31 +110,32 @@ The parquet file is partitioned by id_user
 
 
 
-
-
-
 ---
 # Visualisation
 
 Streamlit is used to display the results of the process.
 
-The App is divided into 3 parts:
 
 ## 1. Sentiment Analysis
 
 Display the sentiment analysis of the tweets of the user selected in the dropdown list.
 
 Graphs used:
+
 - Pie chart
-    Distribution of the sentiment of the tweets
+	- Distribution of the sentiment of the tweets
+
 - Bar chart
-    Number of tweets by sentiment
-    Number of tweets by sentiment and by month
-    Number of tweets by sentiment and by day of month
+	- Number of tweets by sentiment
+	- Number of tweets by sentiment and by month
+	- Number of tweets by sentiment and by day of month
+
 - Line chart
-    Mean score of the sentiment of the tweets (multitple interval of time)
+	- Mean score of the sentiment of the tweets (multitple interval of time)
+
 - Box chart
-    demonstrating the locatity, spread and skewness of the sentiment
+	- Demonstrating the locatity, spread and skewness of the sentiment
+
 
 
 ## 2. Interactions
@@ -142,12 +143,18 @@ Graphs used:
 Display the interactions of the tweets of the user selected in the dropdown list.
 
 Graphs used:
+
 - Line chart
-    Number of total interactions (multitple interval of time)
+	- Number of total interactions (multitple interval of time)
+
 - Bar chart
-    Noomber of interactions by type (retweet, reply, like, quote) 
+	- Number of interactions by type (retweet, reply, like, quote)
+
 - Pie chart
-    Distribution of the interactions by type and by sentiment
+	- Distribution of the interactions by type and by sentiment
+
+
+
 
 
 ## 3. Frequent Words
@@ -155,8 +162,9 @@ Graphs used:
 Display the most frequent words of the tweets of the user selected in the dropdown list.
 
 Graphs used:
+
 - Wordcloud
-    Most 200 frequent words of the tweets
+	- Most 200 frequent words of the tweets
 
 
 
