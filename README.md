@@ -83,10 +83,11 @@ Get Last file in Bronze folder in AWS S3
 Load the model [cardiffnlp/twitter-xlm-roberta-base-sentiment](https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment)
 
 Format the text of the tweets
-
 Predict the sentiment of the tweets
 
 The new data is stored in **Gold/tweets_transform.parquet** in AWS S3
+The parquet file is partitioned by id_user
+
 
 | Column | Type |
 |--------|------|
@@ -107,7 +108,6 @@ The new data is stored in **Gold/tweets_transform.parquet** in AWS S3
 | positive | float64 |
 
 
-The parquet file is partitioned by id_user
 
 
 
