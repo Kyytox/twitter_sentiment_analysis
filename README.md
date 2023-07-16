@@ -19,7 +19,7 @@ Small tweet user sentiment analysis project
 - [Setup](#setup)
 - [Launch](#launch)
 
----
+
 <br/>
 
 # Architecture
