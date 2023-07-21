@@ -1,4 +1,4 @@
-Small tweet user sentiment and interactions analysis project.
+An ELT pipeline with medallion architecture (Bronze, Silver, Gold), to retrieve, detect and analyze sentiment and interaction in tweets. 
 
 <br/>
 
